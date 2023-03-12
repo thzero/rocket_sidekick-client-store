@@ -346,20 +346,26 @@ class AppStore extends BaseStore {
 					return LibraryClientUtility.$store.content;
 				},
 				getContentInfo() {
+					const service = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_FEATURES);
 					const temp = LibraryClientUtility.$store.content;
 					if (!temp)
 						return [];
-					if (!temp.tools)
+					if (!temp.info)
 						return [];
-					return temp.info;
+					if (!service.features().MobileOnly)
+						return temp.info;
+					return temp.info.filter(l => l.mobile);
 				},
 				getContentTools() {
+					const service = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_FEATURES);
 					const temp = LibraryClientUtility.$store.content;
 					if (!temp)
 						return [];
 					if (!temp.tools)
 						return [];
-					return temp.tools;
+					if (!service.features().MobileOnly)
+						return temp.tools;
+					return temp.tools.filter(l => l.mobile);
 				},
 				getFlightData() {
 					return LibraryClientUtility.$store.flightData;
