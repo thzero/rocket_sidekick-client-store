@@ -26,7 +26,8 @@ class AppStore extends BaseStore {
 					'flightMeasurementUnits',
 					'flightPathProcessor',
 					'flightPathStyle',
-					'motorManufacturers',
+					'manufacturers',
+					'manufacturersTtl',
 					'motorSearchCriteria',
 					'motorSearchResults'
 					// 'openSource',
@@ -41,7 +42,7 @@ class AppStore extends BaseStore {
 			// 		'flightInfoResolution',
 			// 		'flightInfoStyle',
 			// 		'flightPathStyle',
-			// 		'motorManufacturers',
+			// 		'manufacturers',
 			// 		'motorSearchCriteria',
 			// 		'motorSearchResults',
 			// 	]
@@ -77,7 +78,9 @@ class AppStore extends BaseStore {
 				flightPathProcessor: null,
 				flightPathStyle: [],
 				flightTitle: '',
-				motorManufacturers: [],
+				manufacturers: [],
+				manufacturersTtl: 0,
+				manufacturersTtlDiff: 1000 * 60 * 30,
 				motorSearchCriteria: {},
 				motorSearchResults: {},
 				online: {},
@@ -137,6 +140,24 @@ class AppStore extends BaseStore {
 
 					return Response.error('store', 'requestContentMarkup', null, null, null, null, correlationId);
 				},
+				async requestManufacturers(correlationId) {
+					// TODO
+					// const now = LibraryCommonUtility.getTimestamp();
+					// const ttl = this.manufacturersTtl ? this.manufacturersTtl : 0;
+					// const delta = now - ttl;
+					// if (this.manufacturers && (delta <= this.manufacturersTtlDiff))
+					// 	return Response.success(correlationId, this.manufacturers);
+
+					const service = LibraryClientUtility.$injector.getService(AppConstants.InjectorKeys.SERVICE_MANUFACTURERS);
+					const response = await service.listing(correlationId, {});
+					this.$logger.debug('store', 'requestManufacturers', 'response', response, correlationId);
+					if (Response.hasSucceeded(response)) {
+						this.manufacturers = response.results.data;
+						return this.manufacturers;
+					}
+
+					return [];
+				},
 				async requestMotor(correlationId, motorId) {
 					const service = LibraryClientUtility.$injector.getService(AppConstants.InjectorKeys.SERVICE_EXTERNAL_MOTOR_SEARCH);
 					const response = await service.motor(correlationId, motorId, this.motorSearchResults);
@@ -149,20 +170,7 @@ class AppStore extends BaseStore {
 
 					return Response.error('store', 'requestMotor', null, null, null, null, correlationId);
 				},
-				async requestMotorManufacturers(correlationId) {
-					const service = LibraryClientUtility.$injector.getService(AppConstants.InjectorKeys.SERVICE_EXTERNAL_MOTOR_SEARCH);
-					const response = await service.manufacturers(correlationId, this.motorManufacturers);
-					this.$logger.debug('store', 'requestMotorManufacturers', 'response', response, correlationId);
-					if (Response.hasSucceeded(response)) {
-						this.motorManufacturers = response.results;
-						return this.motorManufacturers.manufacturers;
-					}
-
-					return [];
-				},
 				async requestMotorSearchReset(correlationId) {
-					this.motorManufacturers.ttl = null;
-					this.motorManufacturers.last = null;
 					this.motorSearchResults.ttl = null;
 					this.motorSearchResults.last = null;
 				},
@@ -405,10 +413,10 @@ class AppStore extends BaseStore {
 				getFlightTitle() {
 					return LibraryClientUtility.$store.flightTitle;
 				},
-				getsetMotorSearchCriteria() {
-					return LibraryClientUtility.$store.motorSearchCriteria;
+				getManufacturers() {
+					return LibraryClientUtility.$store.manufacturers;
 				},
-				async getMotorSearchCriteria() {
+				getMotorSearchCriteria() {
 					return LibraryClientUtility.$store.motorSearchCriteria;
 				},
 				getOnline() {
@@ -428,11 +436,11 @@ class AppStore extends BaseStore {
 				async requestContentMarkup(correlationId, contentId) {
 					return await LibraryClientUtility.$store.requestContentMarkup(correlationId, contentId);
 				},
+				async requestManufacturers(correlationId) {
+					return await LibraryClientUtility.$store.requestManufacturers(correlationId);
+				},
 				async requestMotor(correlationId, motorId) {
 					return await LibraryClientUtility.$store.requestMotor(correlationId, motorId);
-				},
-				async requestMotorManufacturers(correlationId, results) {
-					return await LibraryClientUtility.$store.requestMotorManufacturers(correlationId, results);
 				},
 				async requestMotorSearchReset(correlationId) {
 					return await LibraryClientUtility.$store.requestMotorSearchReset(correlationId);
