@@ -18,23 +18,39 @@ class AppStore extends BaseStore {
 			persist: {
 				key: 'rocketsidekick',
 				storage: localStorage,
-				paths: this._initPluginPersistConfigPaths()
+				paths: [ ...[
+					// 'openSource',
+					// 'plans',
+					// 'user',
+					// 'version'
+				],
+				...this._initPluginPersistConfigPaths(),
+				...this._initPluginPersistConfigPathsTtl(),
+				...this._initPluginPersistConfigPathsMotorSearch(),
+				...this._initPluginPersistConfigPathsI()
+			]
 			}
 		};
 	}
 
 	_initPluginPersistConfigPaths() {
-		return [ ...[
-				'manufacturers',
-				'manufacturersTtl',
-				'motorSearchCriteria',
-				'motorSearchResults'
-				// 'openSource',
-				// 'plans',
-				// 'user',
-				// 'version'
-			],
-			...this._initPluginPersistConfigPathsI()
+		return [
+			'manufacturers',
+			'parts'
+		];
+	}
+
+	_initPluginPersistConfigPathsTtl() {
+		return [
+			'manufacturersTtl',
+			'partsTtl'
+		];
+	}
+
+	_initPluginPersistConfigPathsMotorSearch() {
+		return [
+			'motorSearchCriteria',
+			'motorSearchResults'
 		];
 	}
 
@@ -357,9 +373,6 @@ class AppStore extends BaseStore {
 				if (!service.features().MobileOnly)
 					return temp.tools;
 				return temp.tools.filter(l => l.mobile);
-			},
-			getManufacturers() {
-				return LibraryClientUtility.$store.manufacturers;
 			},
 			getMotorSearchCriteria() {
 				return LibraryClientUtility.$store.motorSearchCriteria;
