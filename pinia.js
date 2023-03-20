@@ -42,6 +42,7 @@ class AppStore extends BaseStore {
 
 	_initPluginPersistConfigPathsTtl() {
 		return [
+			'checklistsTtl',
 			'manufacturersTtl',
 			'partsTtl'
 		];
@@ -73,6 +74,24 @@ class AppStore extends BaseStore {
 				const response = await service.content(correlationId);
 				if (Response.hasSucceeded(response))
 					await this.setContent(correlationId, response.results);
+			},
+			async requestChecklists(correlationId) {
+				// TODO
+				// const now = LibraryCommonUtility.getTimestamp();
+				// const ttl = this.checklistsTtl ? this.checklistsTtl : 0;
+				// const delta = now - ttl;
+				// if (this.checklists && (delta <= this.checklistsTtlDiff))
+				// 	return Response.success(correlationId, this.checklists);
+
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_CHECKLISTS);
+				const response = await service.listing(correlationId, {});
+				this.$logger.debug('store', 'requestChecklists', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					this.checklists = response.results.data;
+					return this.checklists;
+				}
+
+				return [];
 			},
 			async requestContent(correlationId) {
 				const now = LibraryCommonUtility.getTimestamp();
@@ -294,6 +313,9 @@ class AppStore extends BaseStore {
 
 	_initStoreConfigDispatchersBase() {
 		return {
+			async requestChecklists(correlationId) {
+				return await LibraryClientUtility.$store.requestChecklists(correlationId);
+			},
 			async requestContent(correlationId) {
 				return await LibraryClientUtility.$store.requestContent(correlationId);
 			},
