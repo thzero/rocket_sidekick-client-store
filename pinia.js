@@ -71,6 +71,9 @@ class AppStore extends BaseStore {
 	_initStoreConfigActionsBase() {
 		return {
 			async _initialize(correlationId, results) {
+				const serviceFeatures = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_FEATURES);
+				this.mobileOnly = serviceFeatures.features().MobileOnly;
+
 				const service = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_UTILITY);
 				const response = await service.content(correlationId);
 				if (Response.hasSucceeded(response))
@@ -471,26 +474,24 @@ class AppStore extends BaseStore {
 				return LibraryClientUtility.$store.content;
 			},
 			getContentInfo() {
-				const service = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_FEATURES);
 				const temp = LibraryClientUtility.$store.content;
 				if (!temp)
 					return [];
 				if (!temp.info)
 					return [];
-				if (!service.features().MobileOnly)
-					return temp.info;
-				return temp.info.filter(l => l.mobile);
+				if (this.mobileOnly)
+					return temp.info.filter(l => l.mobile);
+				return temp.info;
 			},
 			getContentTools() {
-				const service = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_FEATURES);
 				const temp = LibraryClientUtility.$store.content;
 				if (!temp)
 					return [];
 				if (!temp.tools)
 					return [];
-				if (!service.features().MobileOnly)
-					return temp.tools;
-				return temp.tools.filter(l => l.mobile);
+				if (this.mobileOnly)
+					return temp.info.filter(l => l.mobile);
+				return temp.tools;
 			},
 			getMotorSearchCriteria() {
 				return LibraryClientUtility.$store.motorSearchCriteria;
@@ -531,6 +532,7 @@ class AppStore extends BaseStore {
 			manufacturers: [],
 			manufacturersTtl: 0,
 			manufacturersTtlDiff: 1000 * 60 * 30,
+			mobileOnly: false,
 			motorSearchCriteria: {},
 			motorSearchResults: {},
 			online: {},
