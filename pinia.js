@@ -301,6 +301,17 @@ class AppStore extends BaseStore {
 
 				return Response.error('store', 'requestRocketsUser', null, null, null, null, correlationId);
 			},
+			async saveChecklistUser(correlationId, checklist) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_CHECKLISTS);
+				const response = await service.saveUser(correlationId, checklist);
+				this.$logger.debug('store', 'saveChecklistUser', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setChecklistUser(correlationId, response.results);
+					return Response.success(correlationId, response.results);
+				}
+
+				return Response.error('store', 'saveChecklistUser', null, null, null, null, correlationId);
+			},
 			async setChecklistShared(correlationId, value) {
 				this.$logger.debug('store', 'setChecklistShared', 'checklist.a', value, correlationId);
 				this.$logger.debug('store', 'setChecklistShared', 'checklistsShared.b', this.checklistsShared, correlationId);
@@ -394,6 +405,9 @@ class AppStore extends BaseStore {
 
 	_initStoreConfigDispatchersBase() {
 		return {
+			async requestChecklistByIdUser(correlationId, id) {
+				return await LibraryClientUtility.$store.requestChecklistsShared(correlationId, id);
+			},
 			async requestChecklistsShared(correlationId, params) {
 				return await LibraryClientUtility.$store.requestChecklistsShared(correlationId, params);
 			},
@@ -429,6 +443,9 @@ class AppStore extends BaseStore {
 			},
 			async requestRocketsUser(correlationId, params) {
 				return await LibraryClientUtility.$store.requestRocketsUser(correlationId, params);
+			},
+			async saveChecklistUser(correlationId, checklist) {
+				return await LibraryClientUtility.$store.saveChecklistUser(correlationId, checklist);
 			},
 			async setChecklistShared(correlationId, rocket) {
 				await LibraryClientUtility.$store.setChecklistShared(correlationId, value);
