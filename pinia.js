@@ -496,7 +496,7 @@ class AppStore extends BaseStore {
 					return [];
 				if (!temp.info)
 					return [];
-				if (this.mobileOnly)
+				if (LibraryClientUtility.$store.mobileOnly)
 					return temp.info.filter(l => l.mobile);
 				return temp.info;
 			},
@@ -506,8 +506,8 @@ class AppStore extends BaseStore {
 					return [];
 				if (!temp.tools)
 					return [];
-				if (this.mobileOnly)
-					return temp.info.filter(l => l.mobile);
+				if (LibraryClientUtility.$store.mobileOnly)
+					return temp.tools.filter(l => l.mobile);
 				return temp.tools;
 			},
 			getMotorSearchCriteria() {
