@@ -43,7 +43,6 @@ class AppStore extends BaseStore {
 
 	_initPluginPersistConfigPathsTtl() {
 		return [
-			'checklistsTtl',
 			'manufacturersTtl',
 			'partsTtl'
 		];
