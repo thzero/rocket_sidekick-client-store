@@ -458,6 +458,12 @@ class AppStore extends BaseStore {
 			async setChecklistUser(correlationId, rocket) {
 				await LibraryClientUtility.$store.setChecklistUser(correlationId, value);
 			},
+			async setMotorSearchCriteria(correlationId, value) {
+				await LibraryClientUtility.$store.setMotorSearchCriteria(correlationId, value);
+			},
+			async setMotorSearchResults(correlationId, value) {
+				await LibraryClientUtility.$store.setMotorSearchResults(correlationId, value);
+			},
 			async setOnline(correlationId, value) {
 				await LibraryClientUtility.$store.setOnline(correlationId, value);
 			},
