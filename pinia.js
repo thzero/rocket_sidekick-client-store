@@ -78,6 +78,34 @@ class AppStore extends BaseStore {
 				if (Response.hasSucceeded(response))
 					await this.setContent(correlationId, response.results);
 			},
+			async copyChecklistById(correlationId, id) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_CHECKLISTS);
+				const response = await service.copy(correlationId, id);
+				this.$logger.debug('store', 'copyChecklistById', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setChecklistUser(correlationId, response.results);
+					return Response.success(correlationId, response.results);
+				}
+
+				return Response.error('store', 'copyChecklistById', null, null, null, null, correlationId);
+			},
+			async deleteChecklistUser(correlationId, id) {
+				this.$logger.debug('store', 'deleteChecklistUser', 'checklist.a', id, correlationId);
+				this.$logger.debug('store', 'deleteChecklistUser', 'checklistsUser.b', this.checklistsUser, correlationId);
+				this.checklistsUser = LibraryCommonUtility.removeArrayById(this.checklistsUser, id);
+				this.$logger.debug('store', 'deleteChecklistUser', 'checklistsUser.c', this.checklistsUser, correlationId);
+			},
+			async deleteChecklistByIdUser(correlationId, id) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_CHECKLISTS);
+				const response = await service.deleteUser(correlationId, id);
+				this.$logger.debug('store', 'deleteChecklistByIdUser', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.deleteChecklistUser(correlationId, id);
+					return Response.success(correlationId, response.results);
+				}
+
+				return Response.error('store', 'deleteChecklistByIdUser', null, null, null, null, correlationId);
+			},
 			async requestChecklistByIdShared(correlationId, id) {
 				// const now = LibraryCommonUtility.getTimestamp();
 				// const ttlContent = this.checklistsSharedTtl ? this.checklistsSharedTtl : 0;
@@ -101,12 +129,29 @@ class AppStore extends BaseStore {
 
 				return Response.error('store', 'requestChecklistByIdShared', null, null, null, null, correlationId);
 			},
+			async requestChecklistByIdShared(correlationId, id) {
+				// let checklist = null;
+				// if (this.checklistsShared)
+				// 	checklist = this.checklistsShared.find(l => l.id === id);
+				// if (checklist)
+				// 	return Response.success(correlationId, checklist);
+
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_CHECKLISTS);
+				const response = await service.retrieveShared(correlationId, id);
+				this.$logger.debug('store', 'requestChecklistByIdShared', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setChecklistShared(correlationId, response.results);
+					return Response.success(correlationId, response.results);
+				}
+
+				return Response.error('store', 'requestChecklistByIdShared', null, null, null, null, correlationId);
+			},
 			async requestChecklistByIdUser(correlationId, id) {
-				let checklist = null;
-				if (this.checklistsUser)
-					checklist = this.checklistsUser.find(l => l.id === id);
-				if (checklist)
-					return Response.success(correlationId, checklist);
+				// let checklist = null;
+				// if (this.checklistsUser)
+				// 	checklist = this.checklistsUser.find(l => l.id === id);
+				// if (checklist)
+				// 	return Response.success(correlationId, checklist);
 
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_CHECKLISTS);
 				const response = await service.retrieveUser(correlationId, id);
@@ -404,8 +449,17 @@ class AppStore extends BaseStore {
 
 	_initStoreConfigDispatchersBase() {
 		return {
+			async copyChecklistById(correlationId, params) {
+				return await LibraryClientUtility.$store.copyChecklistById(correlationId, params);
+			},
+			async deleteChecklistByIdUser(correlationId, params) {
+				return await LibraryClientUtility.$store.deleteChecklistByIdUser(correlationId, params);
+			},
+			async requestChecklistByIdShared(correlationId, id) {
+				return await LibraryClientUtility.$store.requestChecklistByIdShared(correlationId, id);
+			},
 			async requestChecklistByIdUser(correlationId, id) {
-				return await LibraryClientUtility.$store.requestChecklistsShared(correlationId, id);
+				return await LibraryClientUtility.$store.requestChecklistByIdUser(correlationId, id);
 			},
 			async requestChecklistsShared(correlationId, params) {
 				return await LibraryClientUtility.$store.requestChecklistsShared(correlationId, params);
