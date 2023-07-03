@@ -254,11 +254,11 @@ class AppStore extends BaseStore {
 				// if (this.rockets && (delta <= this.rocketsTtlDiff))
 				// 	return Response.success(correlationId, this.rockets);
 
-				let rocket = null;
-				if (this.rockets)
-					rocket = this.rockets.find(l => l.id === id);
-				if (rocket)
-					return Response.success(correlationId, rocket);
+				// let rocket = null;
+				// if (this.rockets)
+				// 	rocket = this.rockets.find(l => l.id === id);
+				// if (rocket && rocket.createdTimestamp)
+				// 	return Response.success(correlationId, rocket);
 
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
 				const response = await service.retrieve(correlationId, id);
@@ -274,7 +274,7 @@ class AppStore extends BaseStore {
 				let rocket = null;
 				if (this.rocketsGallery)
 					rocket = this.rocketsGallery.find(l => l.id === id);
-				if (rocket)
+				if (rocket && rocket.createdTimestamp)
 					return Response.success(correlationId, rocket);
 
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
@@ -305,6 +305,12 @@ class AppStore extends BaseStore {
 				return Response.error('store', 'requestRockets', null, null, null, null, correlationId);
 			},
 			async requestRocketsGallery(correlationId, params) {
+				const now = LibraryCommonUtility.getTimestamp();
+				const ttlContent = this.rocketsGalleryTtl ? this.rocketsGalleryTtl : 0;
+				const delta = now - ttlContent;
+				if (this.rocketsGallery && (delta <= this.rocketsGalleryTtlDiff))
+					return Response.success(correlationId, this.rocketsGallery);
+
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
 				const response = await service.listingGallery(correlationId, params);
 				this.$logger.debug('store', 'requestRocketsGallery', 'response', response, correlationId);
@@ -384,12 +390,14 @@ class AppStore extends BaseStore {
 				this.$logger.debug('store', 'setRocketsGallery', 'rockets.a', value, correlationId);
 				this.$logger.debug('store', 'setRocketsGallery', 'rocketsGallery.b', this.rocketsGallery, correlationId);
 				this.rocketsGallery = value;
+				this.rocketsGalleryTtl = LibraryCommonUtility.getTimestamp();
 				this.$logger.debug('store', 'setRocketsGallery', 'rocketsGallery.c', this.rocketsGallery, correlationId);
 			},
 			async setRocketGallery(correlationId, value) {
 				this.$logger.debug('store', 'setRocketGallery', 'rocket.a', value, correlationId);
 				this.$logger.debug('store', 'setRocketGallery', 'rocketsGallery.b', this.rocketsGallery, correlationId);
 				this.rocketsGallery = LibraryCommonUtility.updateArrayByObject(this.rocketsGallery, value);
+				this.rocketsGalleryTtl = LibraryCommonUtility.getTimestamp();
 				this.$logger.debug('store', 'setRocketGallery', 'rocketsGallery.c', this.rocketsGallery, correlationId);
 			}
 		};
@@ -553,6 +561,8 @@ class AppStore extends BaseStore {
 			motorSearchResults: {},
 			online: {},
 			rockets: [],
+			rocketsGalleryTtl: 0,
+			rocketsGalleryTtlDiff: 1000 * 60 * 30,
 			rocketsTtl: 0,
 			rocketsTtlDiff: 1000 * 60 * 30,
 			rocketsGallery: [],
