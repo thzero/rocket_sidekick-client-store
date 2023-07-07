@@ -376,6 +376,28 @@ class AppStore extends BaseStore {
 
 				return Response.error('store', 'saveChecklist', null, null, null, null, correlationId);
 			},
+			async savePart(correlationId, part) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_PARTS);
+				const response = await service.save(correlationId, part);
+				this.$logger.debug('store', 'savePart', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setPart(correlationId, response.results);
+					return Response.success(correlationId, response.results);
+				}
+
+				return Response.error('store', 'savePart', null, null, null, null, correlationId);
+			},
+			async saveRocket(correlationId, rocket) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
+				const response = await service.save(correlationId, rocket);
+				this.$logger.debug('store', 'saveRocket', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setChecklist(correlationId, response.results);
+					return Response.success(correlationId, response.results);
+				}
+
+				return Response.error('store', 'saveRocket', null, null, null, null, correlationId);
+			},
 			async setChecklists(correlationId, value) {
 				this.$logger.debug('store', 'setChecklists', 'checklists.a', value, correlationId);
 				this.$logger.debug('store', 'setChecklists', 'checklists.b', this.checklists, correlationId);
@@ -530,8 +552,11 @@ class AppStore extends BaseStore {
 			async saveChecklist(correlationId, checklist) {
 				return await LibraryClientUtility.$store.saveChecklist(correlationId, checklist);
 			},
-			async setChecklists(correlationId, rockets) {
-				await LibraryClientUtility.$store.setChecklists(correlationId, value);
+			async savePart(correlationId, part) {
+				return await LibraryClientUtility.$store.savePart(correlationId, part);
+			},
+			async saveRocket(correlationId, rocket) {
+				return await LibraryClientUtility.$store.saveRocket(correlationId, rocket);
 			},
 			async setMotorSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setMotorSearchCriteria(correlationId, value);
@@ -541,18 +566,6 @@ class AppStore extends BaseStore {
 			},
 			async setOnline(correlationId, value) {
 				await LibraryClientUtility.$store.setOnline(correlationId, value);
-			},
-			async setRocket(correlationId, rocket) {
-				await LibraryClientUtility.$store.setRocket(correlationId, value);
-			},
-			async setRockets(correlationId, rockets) {
-				await LibraryClientUtility.$store.setRockets(correlationId, value);
-			},
-			async setRocketsGallery(correlationId, rockets) {
-				await LibraryClientUtility.$store.setRocketsGallery(correlationId, value);
-			},
-			async setRocketGallery(correlationId, rocket) {
-				await LibraryClientUtility.$store.setRocketGallery(correlationId, value);
 			}
 		};
 	}
