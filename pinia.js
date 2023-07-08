@@ -275,14 +275,14 @@ class AppStore extends BaseStore {
 				let part = null;
 				if (this.parts)
 					part = this.parts.find(l => l.id === id);
-				if (part && rocket.createdTimestamp)
+				if (part && part.createdTimestamp)
 					return Response.success(correlationId, part);
 
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_PARTS);
 				const response = await service.retrieve(correlationId, id);
 				this.$logger.debug('store', 'requestPartById', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
-					await this.setParts(correlationId, response.results);
+					await this.setPart(correlationId, response.results);
 					return Response.success(correlationId, response.results);
 				}
 
