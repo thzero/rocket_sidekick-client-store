@@ -231,7 +231,6 @@ class AppStore extends BaseStore {
 				const response = await service.motor(correlationId, motorId, this.motorSearchResults);
 				this.$logger.debug('store', 'requestMotor', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
-					// return response.results.motor;
 					this.setMotorSearchResults(response.results.data);
 					return Response.success(correlationId, response.results.motor);
 				}
