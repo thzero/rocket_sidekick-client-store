@@ -231,23 +231,25 @@ class AppStore extends BaseStore {
 				const response = await service.motor(correlationId, motorId, this.motorSearchResults);
 				this.$logger.debug('store', 'requestMotor', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
-					this.motorSearchResults = response.results.data;
 					// return response.results.motor;
+					this.setMotorSearchResults(response.results.data);
 					return Response.success(correlationId, response.results.motor);
 				}
 
 				return Response.error('store', 'requestMotor', null, null, null, null, correlationId);
 			},
 			async requestMotorSearchReset(correlationId) {
-				this.motorSearchResults.ttl = null;
-				this.motorSearchResults.last = null;
+				if (this.motorSearchResults) {
+					this.motorSearchResults.ttl = null;
+					this.motorSearchResults.last = null;
+				}
 			},
 			async requestMotorSearchResults(correlationId, criteria) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_EXTERNAL_MOTOR_SEARCH);
 				const response = await service.search(correlationId, criteria, this.motorSearchResults);
 				this.$logger.debug('store', 'requestMotorSearchResults', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
-					this.motorSearchResults = response.results.data;
+					this.setMotorSearchResults(response.results.data);
 					return response.results.filtered;
 				}
 
@@ -434,6 +436,12 @@ class AppStore extends BaseStore {
 				this.$logger.debug('store', 'setManufacturers', 'manufacturers.c', this.manufacturers, correlationId);
 			},
 			async setMotorSearchCriteria(correlationId, value) { 
+			},
+			async setMotorSearch(correlationId, value) {
+				this.$logger.debug('store', 'setMotorSearch', 'motorSearchResults.a', value, correlationId);
+				this.$logger.debug('store', 'setMotorSearch', 'motorSearchResults.b', this.motorSearchResults, correlationId);
+				this.motorSearchResults = value;
+				this.$logger.debug('store', 'setMotorSearch', 'motorSearchResults.c', this.motorSearchResults, correlationId);
 			},
 			async setOnline(correlationId, online) {
 				this.$logger.debug('store', 'setOnline', 'online.a', online, correlationId);
