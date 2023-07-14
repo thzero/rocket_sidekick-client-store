@@ -230,7 +230,7 @@ class AppStore extends BaseStore {
 				const response = await service.motor(correlationId, motorId, this.motorSearchResults);
 				this.$logger.debug('store', 'requestMotor', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
-					this.setMotorSearchResults(response.results.data);
+					this.setMotorSearchResults(correlationId, response.results.data);
 					return Response.success(correlationId, response.results.motor);
 				}
 
@@ -247,7 +247,7 @@ class AppStore extends BaseStore {
 				const response = await service.search(correlationId, criteria, this.motorSearchResults);
 				this.$logger.debug('store', 'requestMotorSearchResults', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
-					this.setMotorSearchResults(response.results.data);
+					this.setMotorSearchResults(correlationId, response.results.data);
 					return response.results.filtered;
 				}
 
@@ -426,7 +426,8 @@ class AppStore extends BaseStore {
 				this.manufacturersTtl = LibraryCommonUtility.getTimestamp();
 				this.$logger.debug('store', 'setManufacturers', 'manufacturers.c', this.manufacturers, correlationId);
 			},
-			async setMotorSearchCriteria(correlationId, value) { 
+			async setMotorSearchCriteria(correlationId, value) {
+				this.motorSearchCriteria = value;
 			},
 			async setMotorSearchResults(correlationId, value) {
 				this.$logger.debug('store', 'setMotorSearchResults', 'motorSearchResults.a', value, correlationId);
