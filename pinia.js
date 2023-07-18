@@ -155,7 +155,7 @@ class AppStore extends BaseStore {
 			},
 			async requestChecklists(correlationId, params) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_CHECKLISTS);
-				const response = await service.listing(correlationId, params);
+				const response = await service.search(correlationId, params);
 				this.$logger.debug('store', 'requestChecklists', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
 					await this.setChecklists(correlationId, response.results.data);
@@ -331,7 +331,7 @@ class AppStore extends BaseStore {
 				// 	return Response.success(correlationId, this.rockets);
 
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
-				const response = await service.listing(correlationId, params);
+				const response = await service.search(correlationId, params);
 				this.$logger.debug('store', 'requestRockets', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
 					await this.setRockets(correlationId, response.results.data);
@@ -349,7 +349,7 @@ class AppStore extends BaseStore {
 					return Response.success(correlationId, this.rocketsGallery);
 
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
-				const response = await service.listingGallery(correlationId, params);
+				const response = await service.searchGallery(correlationId, params);
 				this.$logger.debug('store', 'requestRocketsGallery', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
 					await this.setRocketsGallery(correlationId, response.results.data);
