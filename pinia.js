@@ -27,8 +27,7 @@ class AppStore extends BaseStore {
 					],
 					...this._initPluginPersistConfigPaths(),
 					...this._initPluginPersistConfigPathsTtl(),
-					...this._initPluginPersistConfigPathsMotorSearch(),
-					...this._initPluginPersistConfigPathsI()
+					...this._initPluginPersistConfigPathsMotorSearch()
 				]
 			}
 		};
@@ -36,8 +35,11 @@ class AppStore extends BaseStore {
 
 	_initPluginPersistConfigPaths() {
 		return [
+			'checklistsSearchCriteria',
 			'manufacturers',
-			'parts'
+			'parts',
+			'partsSearchCriteria',
+			'rocketsSearchCriteria'
 		];
 	}
 
@@ -52,10 +54,6 @@ class AppStore extends BaseStore {
 			'motorSearchCriteria',
 			'motorSearchResults'
 		];
-	}
-
-	_initPluginPersistConfigPathsI() {
-		return [];
 	}
 
 	_initStoreConfigActions() {
@@ -391,17 +389,20 @@ class AppStore extends BaseStore {
 
 				return Response.error('store', 'saveRocket', null, null, null, null, correlationId);
 			},
+			async setChecklist(correlationId, value) {
+				this.$logger.debug('store', 'setChecklist', 'checklist.a', value, correlationId);
+				this.$logger.debug('store', 'setChecklist', 'checklists.b', this.checklists, correlationId);
+				this.checklists = LibraryCommonUtility.updateArrayByObject(this.checklists, value);
+				this.$logger.debug('store', 'setChecklist', 'checklists.c', this.checklists, correlationId);
+			},
 			async setChecklists(correlationId, value) {
 				this.$logger.debug('store', 'setChecklists', 'checklists.a', value, correlationId);
 				this.$logger.debug('store', 'setChecklists', 'checklists.b', this.checklists, correlationId);
 				this.checklists = value;
 				this.$logger.debug('store', 'setChecklists', 'checklists.c', this.checklists, correlationId);
 			},
-			async setChecklist(correlationId, value) {
-				this.$logger.debug('store', 'setChecklist', 'checklist.a', value, correlationId);
-				this.$logger.debug('store', 'setChecklist', 'checklists.b', this.checklists, correlationId);
-				this.checklists = LibraryCommonUtility.updateArrayByObject(this.checklists, value);
-				this.$logger.debug('store', 'setChecklist', 'checklists.c', this.checklists, correlationId);
+			async setChecklistsSearchCriteria(correlationId, value) {
+				this.checklistsSearchCriteria = value;
 			},
 			async setContent(correlationId, content) {
 				this.$logger.debug('store', 'setContent', 'content.a', content, correlationId);
@@ -453,6 +454,14 @@ class AppStore extends BaseStore {
 				this.parts = value;
 				this.$logger.debug('store', 'setParts', 'parts.c', this.parts, correlationId);
 			},
+			async setPartsSearchCriteria(correlationId, value) {
+				if (!value)
+					return;
+				this.partsSearchCriteria = this.partsSearchCriteria ?? {};
+				this.partsSearchCriteria[value.type] = this.partsSearchCriteria[value.type] ?? {};
+				this.partsSearchCriteria[value.type] = value.params;
+				// this.partsSearchCriteria = value;
+			},
 			async setRocket(correlationId, value) {
 				this.$logger.debug('store', 'setRocket', 'rocket.a', value, correlationId);
 				this.$logger.debug('store', 'setRocket', 'rockets.b', this.rockets, correlationId);
@@ -466,6 +475,9 @@ class AppStore extends BaseStore {
 				this.rockets = value;
 				this.rocketsTtl = LibraryCommonUtility.getTimestamp();
 				this.$logger.debug('store', 'setRockets', 'rockets.c', this.rockets, correlationId);
+			},
+			async setRocketsSearchCriteria(correlationId, value) {
+				this.rocketsSearchCriteria = value;
 			},
 			async setRocketsGallery(correlationId, value) {
 				this.$logger.debug('store', 'setRocketsGallery', 'rockets.a', value, correlationId);
@@ -557,8 +569,17 @@ class AppStore extends BaseStore {
 			async saveRocket(correlationId, rocket) {
 				return await LibraryClientUtility.$store.saveRocket(correlationId, rocket);
 			},
+			async setChecklistsSearchCriteria(correlationId, value) {
+				await LibraryClientUtility.$store.setChecklistsSearchCriteria(correlationId, value);
+			},
 			async setMotorSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setMotorSearchCriteria(correlationId, value);
+			},
+			async setPartsSearchCriteria(correlationId, value) {
+				await LibraryClientUtility.$store.setPartsSearchCriteria(correlationId, value);
+			},
+			async setRocketsSearchCriteria(correlationId, value) {
+				await LibraryClientUtility.$store.setRocketsSearchCriteria(correlationId, value);
 			},
 			async setOnline(correlationId, value) {
 				await LibraryClientUtility.$store.setOnline(correlationId, value);
@@ -576,6 +597,9 @@ class AppStore extends BaseStore {
 
 	_initStoreConfigGettersBase() {
 		return {
+			getChecklistsSearchCriteria() {
+				return LibraryClientUtility.$store.checklistsSearchCriteria;
+			},
 			getContent() {
 				return LibraryClientUtility.$store.content;
 			},
@@ -605,8 +629,14 @@ class AppStore extends BaseStore {
 			getOnline() {
 				return LibraryClientUtility.$store.online;
 			},
+			getPartsSearchCriteria() {
+				return LibraryClientUtility.$store.partsSearchCriteria;
+			},
 			getRockets() {
 				return LibraryClientUtility.$store.rockets;
+			},
+			getRocketsSearchCriteria() {
+				return LibraryClientUtility.$store.rocketsSearchCriteria;
 			},
 			getRocketsGallery() {
 				return LibraryClientUtility.$store.rocketsGallery;
@@ -625,6 +655,7 @@ class AppStore extends BaseStore {
 	_initStoreConfigStateBase() {
 		return {
 			checklists: [],
+			checklistsSearchCriteria: {},
 			checkliststTtl: 0,
 			checklistsTtlDiff: 1000 * 60 * 30,
 			checksumLastUpdate: [],
@@ -642,10 +673,12 @@ class AppStore extends BaseStore {
 			motorSearchResults: {},
 			online: {},
 			parts: [],
+			partsSearchCriteria: {},
 			rockets: [],
 			rocketsGallery: [],
 			rocketsGalleryTtl: 0,
 			rocketsGalleryTtlDiff: 1000 * 60 * 30,
+			rocketsSearchCriteria: {},
 			rocketsTtl: 0,
 			rocketsTtlDiff: 1000 * 60 * 30,
 			thrust2weight: {},
