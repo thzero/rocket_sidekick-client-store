@@ -39,6 +39,7 @@ class AppStore extends BaseStore {
 			'manufacturers',
 			'parts',
 			'partsSearchCriteria',
+			'rocketsExpanded',
 			'rocketsSearchCriteria'
 		];
 	}
@@ -496,6 +497,11 @@ class AppStore extends BaseStore {
 				this.rocketsTtl = LibraryCommonUtility.getTimestamp();
 				this.$logger.debug('store', 'setRockets', 'rockets.c', this.rockets, correlationId);
 			},
+			async setRocketsExpanded(correlationId, value) {
+				if (!value || String.isNullOrEmpty(value.id))
+					return;
+				this.rocketsExpanded[value.id] = value.expanded;
+			},
 			async setRocketsSearchCriteria(correlationId, value) {
 				this.rocketsSearchCriteria = value;
 			},
@@ -601,6 +607,9 @@ class AppStore extends BaseStore {
 			async setPartsSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setPartsSearchCriteria(correlationId, value);
 			},
+			async setRocketsExpanded(correlationId, value) {
+				await LibraryClientUtility.$store.setRocketsExpanded(correlationId, value);
+			},
 			async setRocketsSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setRocketsSearchCriteria(correlationId, value);
 			},
@@ -658,6 +667,9 @@ class AppStore extends BaseStore {
 			getRockets() {
 				return LibraryClientUtility.$store.rockets;
 			},
+			getRocketsExpanded() {
+				return LibraryClientUtility.$store.rocketsExpanded;
+			},
 			getRocketsSearchCriteria() {
 				return LibraryClientUtility.$store.rocketsSearchCriteria;
 			},
@@ -700,6 +712,7 @@ class AppStore extends BaseStore {
 			partsRecoverySearchResults: [],
 			partsSearchCriteria: {},
 			rockets: [],
+			rocketsExpanded: {},
 			rocketsGallery: [],
 			rocketsGalleryTtl: 0,
 			rocketsGalleryTtlDiff: 1000 * 60 * 30,
