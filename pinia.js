@@ -280,8 +280,25 @@ class AppStore extends BaseStore {
 
 				return Response.error('store', 'requestParts', null, null, null, null, correlationId);
 			},
+			async requestPartsAltimetersSearchReset(correlationId) {
+				this.requestPartsAltimetersSearchReset(correlationId, []);
+			},
 			async requestPartsRecoverySearchReset(correlationId) {
 				this.setPartsRecoverySearchResults(correlationId, []);
+			},
+			async requestPartsTrackersSearchReset(correlationId) {
+				this.requestPartsTrackersSearchReset(correlationId, []);
+			},
+			async requestPartsAltimetersSearchResults(correlationId, criteria) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_PARTS);
+				const response = await service.searchAltimeters(correlationId, criteria, this.partsAltimetersSearchResults);
+				this.$logger.debug('store', 'requestPartsAltimetersSearchResults', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					this.setPartsAltimetersSearchResults(correlationId, response.results.data);
+					return response.results.data;
+				}
+
+				return [];
 			},
 			async requestPartsRecoverySearchResults(correlationId, criteria) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_PARTS);
@@ -289,6 +306,17 @@ class AppStore extends BaseStore {
 				this.$logger.debug('store', 'requestPartsRecoverySearchResults', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
 					this.setPartsRecoverySearchResults(correlationId, response.results.data);
+					return response.results.data;
+				}
+
+				return [];
+			},
+			async requestPartsTrackersSearchResults(correlationId, criteria) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_PARTS);
+				const response = await service.searchTrackers(correlationId, criteria, this.partsTrackersSearchResults);
+				this.$logger.debug('store', 'requestPartsTrackersSearchResults', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					this.setPartsTrackersSearchResults(correlationId, response.results.data);
 					return response.results.data;
 				}
 
@@ -469,11 +497,23 @@ class AppStore extends BaseStore {
 				this.parts = value;
 				this.$logger.debug('store', 'setParts', 'parts.c', this.parts, correlationId);
 			},
+			async setPartsAltimetersSearchResults(correlationId, value) {
+				this.$logger.debug('store', 'setPartsAltimetersSearchResults', 'partsAltimetersSearchResults.a', value, correlationId);
+				this.$logger.debug('store', 'setPartsAltimetersSearchResults', 'partsAltimetersSearchResults.b', this.partsAltimetersSearchResults, correlationId);
+				this.partsAltimetersSearchResults = value;
+				this.$logger.debug('store', 'setPartsAltimetersSearchResults', 'partsAltimetersSearchResults.c', this.partsAltimetersSearchResults, correlationId);
+			},
 			async setPartsRecoverySearchResults(correlationId, value) {
 				this.$logger.debug('store', 'setPartsRecoverySearchResults', 'partsRecoverySearchResults.a', value, correlationId);
-				this.$logger.debug('store', 'setPartsRecoverySearchResults', 'partsRecoverySearchResults.b', this.motorSearchResults, correlationId);
+				this.$logger.debug('store', 'setPartsRecoverySearchResults', 'partsRecoverySearchResults.b', this.partsRecoverySearchResults, correlationId);
 				this.partsRecoverySearchResults = value;
-				this.$logger.debug('store', 'setPartsRecoverySearchResults', 'partsRecoverySearchResults.c', this.motorSearchResults, correlationId);
+				this.$logger.debug('store', 'setPartsRecoverySearchResults', 'partsRecoverySearchResults.c', this.partsRecoverySearchResults, correlationId);
+			},
+			async setPartsTrackersSearchResults(correlationId, value) {
+				this.$logger.debug('store', 'setPartsTrackersSearchResults', 'partsTrackersSearchResults.a', value, correlationId);
+				this.$logger.debug('store', 'setPartsTrackersSearchResults', 'partsTrackersSearchResults.b', this.partsTrackersSearchResults, correlationId);
+				this.partsTrackersSearchResults = value;
+				this.$logger.debug('store', 'setPartsTrackersSearchResults', 'partsTrackersSearchResults.c', this.partsTrackersSearchResults, correlationId);
 			},
 			async setPartsSearchCriteria(correlationId, value) {
 				if (!value)
@@ -574,8 +614,14 @@ class AppStore extends BaseStore {
 			async requestParts(correlationId, params) {
 				return await LibraryClientUtility.$store.requestParts(correlationId, params);
 			},
+			async requestPartsAltimetersSearchResults(correlationId, params) {
+				return await LibraryClientUtility.$store.requestPartsAltimetersSearchResults(correlationId, params);
+			},
 			async requestPartsRecoverySearchResults(correlationId, params) {
 				return await LibraryClientUtility.$store.requestPartsRecoverySearchResults(correlationId, params);
+			},
+			async requestPartsTrackersSearchResults(correlationId, params) {
+				return await LibraryClientUtility.$store.requestPartsTrackersSearchResults(correlationId, params);
 			},
 			async requestRocketById(correlationId, id) {
 				return await LibraryClientUtility.$store.requestRocketById(correlationId, id);
@@ -708,11 +754,12 @@ class AppStore extends BaseStore {
 			motorSearchResults: {},
 			online: {},
 			parts: [],
-			partsRecoverySearchCriteria: {},
+			partsAltimetersSearchResults: [],
 			partsRecoverySearchResults: [],
+			partsTrackersSearchResults: [],
 			partsSearchCriteria: {},
 			rockets: [],
-			rocketsExpanded: {},
+			rocketsExpanded: {},	
 			rocketsGallery: [],
 			rocketsGalleryTtl: 0,
 			rocketsGalleryTtlDiff: 1000 * 60 * 30,
