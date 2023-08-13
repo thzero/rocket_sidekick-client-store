@@ -426,7 +426,7 @@ class AppStore extends BaseStore {
 				const response = await service.save(correlationId, rocket);
 				this.$logger.debug('store', 'saveRocket', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
-					await this.setChecklist(correlationId, response.results);
+					//await this.setRocket(correlationId, response.results);
 					return Response.success(correlationId, response.results);
 				}
 
