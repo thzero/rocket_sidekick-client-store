@@ -289,34 +289,12 @@ class AppStore extends BaseStore {
 			async requestPartsTrackersSearchReset(correlationId) {
 				this.requestPartsTrackersSearchReset(correlationId, []);
 			},
-			async requestPartsAltimetersSearchResults(correlationId, criteria) {
-				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_PARTS);
-				const response = await service.searchAltimeters(correlationId, criteria, this.partsAltimetersSearchResults);
-				this.$logger.debug('store', 'requestPartsAltimetersSearchResults', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
-					this.setPartsAltimetersSearchResults(correlationId, response.results.data);
-					return response.results.data;
-				}
-
-				return [];
-			},
 			async requestPartsRecoverySearchResults(correlationId, criteria) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_PARTS);
 				const response = await service.searchRecovery(correlationId, criteria, this.partsRecoverySearchResults);
 				this.$logger.debug('store', 'requestPartsRecoverySearchResults', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
 					this.setPartsRecoverySearchResults(correlationId, response.results.data);
-					return response.results.data;
-				}
-
-				return [];
-			},
-			async requestPartsTrackersSearchResults(correlationId, criteria) {
-				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_PARTS);
-				const response = await service.searchTrackers(correlationId, criteria, this.partsTrackersSearchResults);
-				this.$logger.debug('store', 'requestPartsTrackersSearchResults', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
-					this.setPartsTrackersSearchResults(correlationId, response.results.data);
 					return response.results.data;
 				}
 
@@ -639,14 +617,8 @@ class AppStore extends BaseStore {
 			async requestParts(correlationId, params) {
 				return await LibraryClientUtility.$store.requestParts(correlationId, params);
 			},
-			async requestPartsAltimetersSearchResults(correlationId, params) {
-				return await LibraryClientUtility.$store.requestPartsAltimetersSearchResults(correlationId, params);
-			},
 			async requestPartsRecoverySearchResults(correlationId, params) {
 				return await LibraryClientUtility.$store.requestPartsRecoverySearchResults(correlationId, params);
-			},
-			async requestPartsTrackersSearchResults(correlationId, params) {
-				return await LibraryClientUtility.$store.requestPartsTrackersSearchResults(correlationId, params);
 			},
 			async requestRocketById(correlationId, id) {
 				return await LibraryClientUtility.$store.requestRocketById(correlationId, id);
