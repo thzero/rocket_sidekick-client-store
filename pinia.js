@@ -374,7 +374,7 @@ class AppStore extends BaseStore {
 				this.$logger.debug('store', 'requestRocketSetups', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
 					await this.setRocketSetups(correlationId, response.results.data);
-					return Response.success(correlationId, this.rockets);
+					return Response.success(correlationId, this.rocketSetups);
 				}
 
 				return Response.error('store', 'requestRocketSetups', null, null, null, null, correlationId);
@@ -548,6 +548,9 @@ class AppStore extends BaseStore {
 			async setRocketsSearchCriteria(correlationId, value) {
 				this.rocketsSearchCriteria = value;
 			},
+			async setRocketSetupsSearchCriteria(correlationId, value) {
+				this.rocketSetupsSearchCriteria = value;
+			},
 			async setRocketsGallery(correlationId, value) {
 				this.$logger.debug('store', 'setRocketsGallery', 'rockets.a', value, correlationId);
 				this.$logger.debug('store', 'setRocketsGallery', 'rocketsGallery.b', this.rocketsGallery, correlationId);
@@ -665,6 +668,9 @@ class AppStore extends BaseStore {
 			async setRocketsSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setRocketsSearchCriteria(correlationId, value);
 			},
+			async setRocketSetupsSearchCriteria(correlationId, value) {
+				await LibraryClientUtility.$store.setRocketSetupsSearchCriteria(correlationId, value);
+			},
 			async setOnline(correlationId, value) {
 				await LibraryClientUtility.$store.setOnline(correlationId, value);
 			}
@@ -725,6 +731,9 @@ class AppStore extends BaseStore {
 			getRocketsSearchCriteria() {
 				return LibraryClientUtility.$store.rocketsSearchCriteria;
 			},
+			getRocketSetupsSearchCriteria() {
+				return LibraryClientUtility.$store.rocketSetupsSearchCriteria;
+			},
 			getRocketsGallery() {
 				return LibraryClientUtility.$store.rocketsGallery;
 			}
@@ -771,6 +780,7 @@ class AppStore extends BaseStore {
 			rocketsGalleryTtlDiff: 1000 * 60 * 30,
 			rocketsSearchCriteria: {},
 			rocketSetups: [],
+			rocketSetupsSearchCriteria: {},
 			rocketSetupsTtl: 0,
 			rocketSetupsTtlDiff: 1000 * 60 * 30,
 			rocketsTtl: 0,
