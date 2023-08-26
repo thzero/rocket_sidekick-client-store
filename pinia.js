@@ -40,6 +40,7 @@ class AppStore extends BaseStore {
 			'parts',
 			'partsSearchCriteria',
 			'rocketsExpanded',
+			'rocketSetupsExpanded',
 			'rocketsSearchCriteria'
 		];
 	}
@@ -545,12 +546,6 @@ class AppStore extends BaseStore {
 					return;
 				this.rocketsExpanded[value.id] = value.expanded;
 			},
-			async setRocketsSearchCriteria(correlationId, value) {
-				this.rocketsSearchCriteria = value;
-			},
-			async setRocketSetupsSearchCriteria(correlationId, value) {
-				this.rocketSetupsSearchCriteria = value;
-			},
 			async setRocketsGallery(correlationId, value) {
 				this.$logger.debug('store', 'setRocketsGallery', 'rockets.a', value, correlationId);
 				this.$logger.debug('store', 'setRocketsGallery', 'rocketsGallery.b', this.rocketsGallery, correlationId);
@@ -564,6 +559,17 @@ class AppStore extends BaseStore {
 				this.rocketsGallery = LibraryCommonUtility.updateArrayByObject(this.rocketsGallery, value);
 				this.rocketsGalleryTtl = LibraryCommonUtility.getTimestamp();
 				this.$logger.debug('store', 'setRocketGallery', 'rocketsGallery.c', this.rocketsGallery, correlationId);
+			},
+			async setRocketsSearchCriteria(correlationId, value) {
+				this.rocketsSearchCriteria = value;
+			},
+			async setRocketSetupsExpanded(correlationId, value) {
+				if (!value || String.isNullOrEmpty(value.id))
+					return;
+				this.rocketSetupsExpanded[value.id] = value.expanded;
+			},
+			async setRocketSetupsSearchCriteria(correlationId, value) {
+				this.rocketSetupsSearchCriteria = value;
 			}
 		};
 	}
@@ -668,6 +674,9 @@ class AppStore extends BaseStore {
 			async setRocketsSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setRocketsSearchCriteria(correlationId, value);
 			},
+			async setRocketSetupsExpanded(correlationId, value) {
+				await LibraryClientUtility.$store.setRocketSetupsExpanded(correlationId, value);
+			},
 			async setRocketSetupsSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setRocketSetupsSearchCriteria(correlationId, value);
 			},
@@ -734,6 +743,9 @@ class AppStore extends BaseStore {
 			getRocketSetupsSearchCriteria() {
 				return LibraryClientUtility.$store.rocketSetupsSearchCriteria;
 			},
+			getRocketSetupsExpanded() {
+				return LibraryClientUtility.$store.rocketSetupsExpanded;
+			},
 			getRocketsGallery() {
 				return LibraryClientUtility.$store.rocketsGallery;
 			}
@@ -780,6 +792,7 @@ class AppStore extends BaseStore {
 			rocketsGalleryTtlDiff: 1000 * 60 * 30,
 			rocketsSearchCriteria: {},
 			rocketSetups: [],
+			rocketSetupsExpanded: {},
 			rocketSetupsSearchCriteria: {},
 			rocketSetupsTtl: 0,
 			rocketSetupsTtlDiff: 1000 * 60 * 30,
