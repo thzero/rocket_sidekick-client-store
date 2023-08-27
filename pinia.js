@@ -708,9 +708,24 @@ class AppStore extends BaseStore {
 					return [];
 				if (!temp.info)
 					return [];
+				let temp2 = temp.info.filter(l => l.id !== 'slideshow');
+				temp2 = temp2.filter(l => l.enabled);
 				if (LibraryClientUtility.$store.mobileOnly)
-					return temp.info.filter(l => l.mobile);
-				return temp.info;
+					return temp2.filter(l => l.mobile);
+				return temp2;
+			},
+			getContentInfoSlideshow() {
+				const temp = LibraryClientUtility.$store.content;
+				if (!temp)
+					return '';
+				if (!temp.info)
+					return '';
+				let temp2 = temp.info.find(l => l.id === 'slideshow');
+				if (!temp2)
+					return '';
+				if (!temp2.enabled)
+					return '';
+				return temp2.link;
 			},
 			getContentTools() {
 				const temp = LibraryClientUtility.$store.content;
@@ -718,9 +733,10 @@ class AppStore extends BaseStore {
 					return [];
 				if (!temp.tools)
 					return [];
+				const temp2 = temp.tools.filter(l => l.enabled);
 				if (LibraryClientUtility.$store.mobileOnly)
-					return temp.tools.filter(l => l.mobile);
-				return temp.tools;
+					return temp2.filter(l => l.mobile);
+				return temp2;
 			},
 			getMotorSearchCriteria() {
 				return LibraryClientUtility.$store.motorSearchCriteria;
