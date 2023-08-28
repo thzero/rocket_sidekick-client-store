@@ -136,6 +136,40 @@ class AppStore extends BaseStore {
 
 				return Response.error('store', 'deletePartById', null, null, null, null, correlationId);
 			},
+			async deleteRocket(correlationId, id) {
+				this.$logger.debug('store', 'deleteRocket', 'rocket.a', id, correlationId);
+				this.$logger.debug('store', 'deleteRocket', 'rockets.b', this.rockets, correlationId);
+				this.rockets = LibraryCommonUtility.removeArrayById(this.rockets, id);
+				this.$logger.debug('store', 'deleteRocket', 'rockets.c', this.rockets, correlationId);
+			},
+			async deleteRocketById(correlationId, id) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
+				const response = await service.delete(correlationId, id);
+				this.$logger.debug('store', 'deleteRocketById', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.deleteRocket(correlationId, id);
+					return Response.success(correlationId, response.results);
+				}
+
+				return Response.error('store', 'deleteRocketById', null, null, null, null, correlationId);
+			},
+			async deleteRocketSetup(correlationId, id) {
+				this.$logger.debug('store', 'deleteRocketSetup', 'rocketSetup.a', id, correlationId);
+				this.$logger.debug('store', 'deleteRocketSetup', 'rocketSetups.b', this.rocketSetups, correlationId);
+				this.rocketSetups = LibraryCommonUtility.removeArrayById(this.rocketSetups, id);
+				this.$logger.debug('store', 'deleteRocketSetup', 'rocketSetups.c', this.rocketSetups, correlationId);
+			},
+			async deleteRocketSetupById(correlationId, id) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETSETUPS);
+				const response = await service.delete(correlationId, id);
+				this.$logger.debug('store', 'deleteRocketSetupById', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.deleteRocketSetup(correlationId, id);
+					return Response.success(correlationId, response.results);
+				}
+
+				return Response.error('store', 'deleteRocketSetupById', null, null, null, null, correlationId);
+			},
 			async requestChecklistById(correlationId, id) {
 				// let checklist = null;
 				// if (this.checklists)
@@ -595,6 +629,12 @@ class AppStore extends BaseStore {
 			},
 			async deletePartById(correlationId, id) {
 				return await LibraryClientUtility.$store.deletePartById(correlationId, id);
+			},
+			async deleteRocketById(correlationId, id) {
+				return await LibraryClientUtility.$store.deleteRocketById(correlationId, id);
+			},
+			async deleteRocketSetupById(correlationId, id) {
+				return await LibraryClientUtility.$store.deleteRocketSetupById(correlationId, id);
 			},
 			async requestChecklistById(correlationId, id) {
 				return await LibraryClientUtility.$store.requestChecklistById(correlationId, id);
