@@ -1,3 +1,4 @@
+import AppCommonConstants from 'rocket_sidekick_common/constants';
 import AppSharedConstants from '@/utility/constants';
 import LibraryClientConstants from '@thzero/library_client/constants.js';
 
@@ -270,22 +271,22 @@ class AppStore extends BaseStore {
 
 				return Response.error('store', 'requestMotor', null, null, null, null, correlationId);
 			},
-			async requestMotorSearchReset(correlationId) {
-				if (this.motorSearchResults) {
-					this.motorSearchResults.ttl = null;
-					this.motorSearchResults.last = null;
-				}
-			},
-			async requestMotorSearchResults(correlationId, criteria) {
+			async requestMotorSearch(correlationId, criteria) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_EXTERNAL_MOTOR_SEARCH);
 				const response = await service.search(correlationId, criteria, this.motorSearchResults);
-				this.$logger.debug('store', 'requestMotorSearchResults', 'response', response, correlationId);
+				this.$logger.debug('store', 'requestMotorSearch', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
 					this.setMotorSearchResults(correlationId, response.results.data);
 					return response.results.filtered;
 				}
 
 				return [];
+			},
+			async requestMotorSearchReset(correlationId) {
+				if (this.motorSearchResults) {
+					this.motorSearchResults.ttl = null;
+					this.motorSearchResults.last = null;
+				}
 			},
 			async requestPartById(correlationId, id) {
 				let part = null;
@@ -315,21 +316,20 @@ class AppStore extends BaseStore {
 
 				return Response.error('store', 'requestParts', null, null, null, null, correlationId);
 			},
-			async requestPartsAltimetersSearchReset(correlationId) {
-				this.requestPartsAltimetersSearchReset(correlationId, []);
+			async requestPartsRocketSearchReset(correlationId) {
+				this.setPartsRocketSearchResults(correlationId, []);
 			},
-			async requestPartsRecoverySearchReset(correlationId) {
-				this.setPartsRecoverySearchResults(correlationId, []);
-			},
-			async requestPartsTrackersSearchReset(correlationId) {
-				this.requestPartsTrackersSearchReset(correlationId, []);
-			},
-			async requestPartsRecoverySearchResults(correlationId, criteria) {
+			async requestPartsRocketSearch(correlationId, criteria) {
+				if (criteria.partTypes.indexOf(AppCommonConstants.Rocketry.PartTypes.motor) > -1) {
+					delete criteria.partTypes;
+					return this.requestMotorSearch(correlationId, criteria);
+				}
+
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_PARTS);
-				const response = await service.searchRecovery(correlationId, criteria, this.partsRecoverySearchResults);
-				this.$logger.debug('store', 'requestPartsRecoverySearchResults', 'response', response, correlationId);
+				const response = await service.searchRocket(correlationId, criteria, this.partsRocketSearchResults);
+				this.$logger.debug('store', 'requestPartsRocketSearch', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
-					this.setPartsRecoverySearchResults(correlationId, response.results.data);
+					this.setPartsRocketSearchResults(correlationId, response.results.data);
 					return response.results.data;
 				}
 
@@ -527,11 +527,11 @@ class AppStore extends BaseStore {
 				this.partsAltimetersSearchResults = value;
 				this.$logger.debug('store', 'setPartsAltimetersSearchResults', 'partsAltimetersSearchResults.c', this.partsAltimetersSearchResults, correlationId);
 			},
-			async setPartsRecoverySearchResults(correlationId, value) {
-				this.$logger.debug('store', 'setPartsRecoverySearchResults', 'partsRecoverySearchResults.a', value, correlationId);
-				this.$logger.debug('store', 'setPartsRecoverySearchResults', 'partsRecoverySearchResults.b', this.partsRecoverySearchResults, correlationId);
-				this.partsRecoverySearchResults = value;
-				this.$logger.debug('store', 'setPartsRecoverySearchResults', 'partsRecoverySearchResults.c', this.partsRecoverySearchResults, correlationId);
+			async setPartsRocketSearchResults(correlationId, value) {
+				this.$logger.debug('store', 'setPartsRocketSearchResults', 'partsRocketSearchResults.a', value, correlationId);
+				this.$logger.debug('store', 'setPartsRocketSearchResults', 'partsRocketSearchResults.b', this.partsRocketSearchResults, correlationId);
+				this.partsRocketSearchResults = value;
+				this.$logger.debug('store', 'setPartsRocketSearchResults', 'partsRocketSearchResults.c', this.partsRocketSearchResults, correlationId);
 			},
 			async setPartsTrackersSearchResults(correlationId, value) {
 				this.$logger.debug('store', 'setPartsTrackersSearchResults', 'partsTrackersSearchResults.a', value, correlationId);
@@ -654,11 +654,11 @@ class AppStore extends BaseStore {
 			async requestMotor(correlationId, motorId) {
 				return await LibraryClientUtility.$store.requestMotor(correlationId, motorId);
 			},
+			async requestMotorSearch(correlationId, criteria) {
+				return await LibraryClientUtility.$store.requestMotorSearch(correlationId, criteria);
+			},
 			async requestMotorSearchReset(correlationId) {
 				return await LibraryClientUtility.$store.requestMotorSearchReset(correlationId);
-			},
-			async requestMotorSearchResults(correlationId, criteria) {
-				return await LibraryClientUtility.$store.requestMotorSearchResults(correlationId, criteria);
 			},
 			async requestPartById(correlationId, id) {
 				return await LibraryClientUtility.$store.requestPartById(correlationId, id);
@@ -666,8 +666,8 @@ class AppStore extends BaseStore {
 			async requestParts(correlationId, params) {
 				return await LibraryClientUtility.$store.requestParts(correlationId, params);
 			},
-			async requestPartsRecoverySearchResults(correlationId, params) {
-				return await LibraryClientUtility.$store.requestPartsRecoverySearchResults(correlationId, params);
+			async requestPartsRocketSearch(correlationId, params) {
+				return await LibraryClientUtility.$store.requestPartsRocketSearch(correlationId, params);
 			},
 			async requestRocketById(correlationId, id) {
 				return await LibraryClientUtility.$store.requestRocketById(correlationId, id);
@@ -837,9 +837,7 @@ class AppStore extends BaseStore {
 			motorSearchResults: {},
 			online: {},
 			parts: [],
-			partsAltimetersSearchResults: [],
-			partsRecoverySearchResults: [],
-			partsTrackersSearchResults: [],
+			partsRocketSearchResults: [],
 			partsSearchCriteria: {},
 			rockets: [],
 			rocketsExpanded: {},	
