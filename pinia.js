@@ -320,7 +320,8 @@ class AppStore extends BaseStore {
 				this.setPartsRocketSearchResults(correlationId, []);
 			},
 			async requestPartsRocketSearch(correlationId, criteria) {
-				if (criteria.partTypes.indexOf(AppCommonConstants.Rocketry.PartTypes.motor) > -1) {
+				const isMotor = criteria.partTypes.find(l => l === AppCommonConstants.Rocketry.PartTypes.motor);
+				if (isMotor) {
 					delete criteria.partTypes;
 					return this.requestMotorSearch(correlationId, criteria);
 				}
