@@ -39,6 +39,7 @@ class AppStore extends BaseStore {
 			'checklistsSearchCriteria',
 			'manufacturers',
 			'parts',
+			'partsRocketSearchCriteria',
 			'partsSearchCriteria',
 			'rocketsExpanded',
 			'rocketSetupsExpanded',
@@ -441,9 +442,8 @@ class AppStore extends BaseStore {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
 				const response = await service.save(correlationId, rocket);
 				this.$logger.debug('store', 'saveRocket', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					return Response.success(correlationId, response.results);
-				}
 
 				return Response.error('store', 'saveRocket', null, null, null, null, correlationId);
 			},
@@ -451,9 +451,8 @@ class AppStore extends BaseStore {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETSETUPS);
 				const response = await service.save(correlationId, rocket);
 				this.$logger.debug('store', 'saveRocketSetup', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					return Response.success(correlationId, response.results);
-				}
 
 				return Response.error('store', 'saveRocketSetup', null, null, null, null, correlationId);
 			},
@@ -540,13 +539,18 @@ class AppStore extends BaseStore {
 				this.partsTrackersSearchResults = value;
 				this.$logger.debug('store', 'setPartsTrackersSearchResults', 'partsTrackersSearchResults.c', this.partsTrackersSearchResults, correlationId);
 			},
+			async setPartsRocketSearchCriteria(correlationId, value) {
+				if (!value)
+					return;
+				this.partsRocketSearchCriteria = this.partsRocketSearchCriteria ?? {};
+				this.partsRocketSearchCriteria = value.params;
+			},
 			async setPartsSearchCriteria(correlationId, value) {
 				if (!value)
 					return;
 				this.partsSearchCriteria = this.partsSearchCriteria ?? {};
 				this.partsSearchCriteria[value.type] = this.partsSearchCriteria[value.type] ?? {};
 				this.partsSearchCriteria[value.type] = value.params;
-				// this.partsSearchCriteria = value;
 			},
 			async setRocket(correlationId, value) {
 				this.$logger.debug('store', 'setRocket', 'rocket.a', value, correlationId);
@@ -706,6 +710,9 @@ class AppStore extends BaseStore {
 			async setMotorSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setMotorSearchCriteria(correlationId, value);
 			},
+			async setPartsRocketSearchCriteria(correlationId, value) {
+				await LibraryClientUtility.$store.setPartsRocketSearchCriteria(correlationId, value);
+			},
 			async setPartsSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setPartsSearchCriteria(correlationId, value);
 			},
@@ -785,6 +792,9 @@ class AppStore extends BaseStore {
 			getOnline() {
 				return LibraryClientUtility.$store.online;
 			},
+			getPartsRocketSearchCriteria() {
+				return LibraryClientUtility.$store.partsRocketSearchCriteria;
+			},
 			getPartsSearchCriteria() {
 				return LibraryClientUtility.$store.partsSearchCriteria;
 			},
@@ -839,6 +849,7 @@ class AppStore extends BaseStore {
 			online: {},
 			parts: [],
 			partsRocketSearchResults: [],
+			partsRocketSearchCriteria: {},
 			partsSearchCriteria: {},
 			rockets: [],
 			rocketsExpanded: {},	
