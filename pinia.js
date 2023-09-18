@@ -264,23 +264,33 @@ class AppStore extends BaseStore {
 			async requestMotor(correlationId, motorId) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_EXTERNAL_MOTOR_SEARCH);
 				const response = await service.motor(correlationId, motorId, this.motorSearchResults);
+				// console.log('pina.requestMotor.response');
+				// console.dir(response);
 				this.$logger.debug('store', 'requestMotor', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
 					this.setMotorSearchResults(correlationId, response.results.data);
+					// console.log('pina.requestMotor.response');
+					// console.dir(response.results.motor);
 					return Response.success(correlationId, response.results.motor);
 				}
 
+				// console.log('pina.requestMotor.response - failed');
 				return Response.error('store', 'requestMotor', null, null, null, null, correlationId);
 			},
 			async requestMotorSearch(correlationId, criteria) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_EXTERNAL_MOTOR_SEARCH);
 				const response = await service.search(correlationId, criteria, this.motorSearchResults);
+				// console.log('pina.requestMotorSearch.response');
+				// console.dir(response);
 				this.$logger.debug('store', 'requestMotorSearch', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
 					this.setMotorSearchResults(correlationId, response.results.data);
+					// console.log('pina.requestMotorSearch.filtered');
+					// console.dir(response.results.filtered);
 					return response.results.filtered;
 				}
 
+				// console.log('pina.requestMotorSearch.response - failed');
 				return [];
 			},
 			async requestMotorSearchReset(correlationId) {
