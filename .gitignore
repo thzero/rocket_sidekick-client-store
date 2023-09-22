@@ -27,10 +27,5 @@ firebase-debug.log*
 .env.*
 .env*
 
-/src/config/config.json
-/src/config/config.json.bak
-/src/config/development.json
-/src/config/development.json.bak
-#/src/config/production.json
-/src/config/production.json.bak
-/src/config/productionManual.json
+*.bat
+*.sh
