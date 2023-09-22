@@ -280,17 +280,17 @@ class AppStore extends BaseStore {
 			async requestMotorSearch(correlationId, criteria) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_EXTERNAL_MOTOR_SEARCH);
 				const response = await service.search(correlationId, criteria, this.motorSearchResults);
-				console.log('pina.requestMotorSearch.response');
-				console.dir(response);
+				// console.log('pina.requestMotorSearch.response');
+				// console.dir(response);
 				this.$logger.debug('store', 'requestMotorSearch', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
 					this.setMotorSearchResults(correlationId, response.results.data);
-					console.log('pina.requestMotorSearch.filtered');
-					console.dir(response.results.filtered);
+					// console.log('pina.requestMotorSearch.filtered');
+					// console.dir(response.results.filtered);
 					return response.results.filtered;
 				}
 
-				console.log('pina.requestMotorSearch.response - failed');
+				// console.log('pina.requestMotorSearch.response - failed');
 				return [];
 			},
 			async requestMotorSearchReset(correlationId) {
