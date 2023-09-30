@@ -244,6 +244,25 @@ class AppStore extends BaseStore {
 
 				return Response.error('store', 'requestContentMarkup', null, null, null, null, correlationId);
 			},
+			async requestCountries(correlationId) {
+				// TODO
+				const now = LibraryCommonUtility.getTimestamp();
+				const ttl = this.countriesTtl ? this.countriesTtl : 0;
+				const delta = now - ttl;
+				// if (this.countries && (this.countries.length) > 0 && (delta <= this.countriesTtlDiff))
+				if (this._checkTtl(this.countries, delta, this.countriessTtlDiff))
+					return Response.success(correlationId, this.countries);
+
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_COUNTRIES);
+				const response = await service.listing(correlationId, {});
+				this.$logger.debug('store', 'requestCountries', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					this.setCountries(correlationId, response.results.data);
+					return Response.success(correlationId, this.countries);
+				}
+
+				return [];
+			},
 			async requestLaunchById(correlationId, id) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LAUNCHES);
 				const response = await service.retrieve(correlationId, id);
@@ -261,7 +280,7 @@ class AppStore extends BaseStore {
 				this.$logger.debug('store', 'requestLaunches', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
 					await this.setLaunches(correlationId, response.results.data);
-					return Response.success(correlationId, this.rocketSetups);
+					return Response.success(correlationId, this.launches);
 				}
 
 				return Response.error('store', 'requestLaunches', null, null, null, null, correlationId);
@@ -283,7 +302,7 @@ class AppStore extends BaseStore {
 				this.$logger.debug('store', 'requestLocations', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
 					await this.setLocations(correlationId, response.results.data);
-					return Response.success(correlationId, this.rocketSetups);
+					return Response.success(correlationId, this.locations);
 				}
 
 				return Response.error('store', 'requestLocations', null, null, null, null, correlationId);
@@ -302,7 +321,7 @@ class AppStore extends BaseStore {
 				this.$logger.debug('store', 'requestManufacturers', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
 					this.setManufacturers(correlationId, response.results.data);
-					return this.manufacturers;
+					return Response.success(correlationId, this.manufacturers);
 				}
 
 				return [];
@@ -543,6 +562,13 @@ class AppStore extends BaseStore {
 				}
 				this.$logger.debug('store', 'setContent', 'contentMarkup.c', this.contentMarkup, correlationId);
 			},
+			async setCountries(correlationId, value) {
+				this.$logger.debug('store', 'setCountries', 'countries.a', value, correlationId);
+				this.$logger.debug('store', 'setCountries', 'countries.b', this.countries, correlationId);
+				this.countries = value;
+				this.countriesTtl = LibraryCommonUtility.getTimestamp();
+				this.$logger.debug('store', 'setCountries', 'countries.c', this.countries, correlationId);
+			},
 			async setLaunchesSearchCriteria(correlationId, value) {
 				this.launchesSearchCriteria = value;
 			},
@@ -742,6 +768,9 @@ class AppStore extends BaseStore {
 			},
 			async requestContentMarkup(correlationId, contentId) {
 				return await LibraryClientUtility.$store.requestContentMarkup(correlationId, contentId);
+			},
+			async requestCountries(correlationId) {
+				return await LibraryClientUtility.$store.requestCountries(correlationId);
 			},
 			async requestLaunchById(correlationId, id) {
 				return await LibraryClientUtility.$store.requestLaunchById(correlationId, id);
@@ -954,6 +983,9 @@ class AppStore extends BaseStore {
 			contentMarkup: [],
 			contentMarkupTtl: 0,
 			contentMarkupTtlDiff: 1000 * 60 * 30,
+			countries: [],
+			countriesTtl: 0,
+			countriesTtlDiff: 1000 * 60 * 30,
 			launches: [],
 			launchesTtl: 0,
 			launchesTtlDiff: 1000 * 60 * 30,
