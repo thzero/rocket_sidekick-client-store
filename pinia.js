@@ -37,6 +37,8 @@ class AppStore extends BaseStore {
 	_initPluginPersistConfigPaths() {
 		return [
 			'checklistsSearchCriteria',
+			'launchesSearchCriteria',
+			'locationsSearchCriteria',
 			'manufacturers',
 			'parts',
 			'partsRocketSearchCriteria',
@@ -242,6 +244,50 @@ class AppStore extends BaseStore {
 
 				return Response.error('store', 'requestContentMarkup', null, null, null, null, correlationId);
 			},
+			async requestLaunchById(correlationId, id) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LAUNCHES);
+				const response = await service.retrieve(correlationId, id);
+				this.$logger.debug('store', 'requestLaunchById', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setLaunch(correlationId, response.results);
+					return Response.success(correlationId, response.results);
+				}
+
+				return Response.error('store', 'requestRocketById', null, null, null, null, correlationId);
+			},
+			async requestLaunches(correlationId, params) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LAUNCHES);
+				const response = await service.search(correlationId, params);
+				this.$logger.debug('store', 'requestLaunches', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setLaunches(correlationId, response.results.data);
+					return Response.success(correlationId, this.rocketSetups);
+				}
+
+				return Response.error('store', 'requestLaunches', null, null, null, null, correlationId);
+			},
+			async requestLocationById(correlationId, id) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LOCATIONS);
+				const response = await service.retrieve(correlationId, id);
+				this.$logger.debug('store', 'requestLocationById', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setLocation(correlationId, response.results);
+					return Response.success(correlationId, response.results);
+				}
+
+				return Response.error('store', 'requestRocketById', null, null, null, null, correlationId);
+			},
+			async requestLocations(correlationId, params) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LOCATIONS);
+				const response = await service.search(correlationId, params);
+				this.$logger.debug('store', 'requestLocations', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setLocations(correlationId, response.results.data);
+					return Response.success(correlationId, this.rocketSetups);
+				}
+
+				return Response.error('store', 'requestLocations', null, null, null, null, correlationId);
+			},
 			async requestManufacturers(correlationId) {
 				// TODO
 				const now = LibraryCommonUtility.getTimestamp();
@@ -384,7 +430,7 @@ class AppStore extends BaseStore {
 					return Response.success(correlationId, response.results);
 				}
 
-				return Response.error('store', 'requestRocketById', null, null, null, null, correlationId);
+				return Response.error('store', 'requestRocketSetupById', null, null, null, null, correlationId);
 			},
 			async requestRockets(correlationId, params) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
@@ -496,6 +542,40 @@ class AppStore extends BaseStore {
 					LibraryCommonUtility.updateArrayByObject(this.contentMarkup, content);
 				}
 				this.$logger.debug('store', 'setContent', 'contentMarkup.c', this.contentMarkup, correlationId);
+			},
+			async setLaunchesSearchCriteria(correlationId, value) {
+				this.launchesSearchCriteria = value;
+			},
+			async setLocationsSearchCriteria(correlationId, value) {
+				this.locationsSearchCriteria = value;
+			},
+			async setLaunch(correlationId, value) {
+				this.$logger.debug('store', 'setLaunch', 'launches.a', value, correlationId);
+				this.$logger.debug('store', 'setLaunch', 'launches.b', this.launches, correlationId);
+				this.launches = LibraryCommonUtility.updateArrayByObject(this.rocketSetups, value);
+				this.launchesTtl = LibraryCommonUtility.getTimestamp();
+				this.$logger.debug('store', 'setLaunch', 'launches.c', this.launches, correlationId);
+			},
+			async setLaunches(correlationId, value) {
+				this.$logger.debug('store', 'setLaunches', 'launches.a', value, correlationId);
+				this.$logger.debug('store', 'setLaunches', 'launches.b', this.launches, correlationId);
+				this.launches = value;
+				this.launchesTtl = LibraryCommonUtility.getTimestamp();
+				this.$logger.debug('store', 'setLaunches', 'launches.c', this.launches, correlationId);
+			},
+			async setLocation(correlationId, value) {
+				this.$logger.debug('store', 'setLocation', 'locations.a', value, correlationId);
+				this.$logger.debug('store', 'setLocation', 'locations.b', this.locations, correlationId);
+				this.locations = LibraryCommonUtility.updateArrayByObject(this.rocketSetups, value);
+				this.locationsTtl = LibraryCommonUtility.getTimestamp();
+				this.$logger.debug('store', 'setLocation', 'locations.c', this.locations, correlationId);
+			},
+			async setLocations(correlationId, value) {
+				this.$logger.debug('store', 'setLocations', 'locations.a', value, correlationId);
+				this.$logger.debug('store', 'setLocations', 'locations.b', this.locations, correlationId);
+				this.locations = value;
+				this.locationsTtl = LibraryCommonUtility.getTimestamp();
+				this.$logger.debug('store', 'setLocations', 'locations.c', this.locations, correlationId);
 			},
 			async setManufacturers(correlationId, value) {
 				this.$logger.debug('store', 'setManufacturers', 'manufacturers.a', value, correlationId);
@@ -663,6 +743,18 @@ class AppStore extends BaseStore {
 			async requestContentMarkup(correlationId, contentId) {
 				return await LibraryClientUtility.$store.requestContentMarkup(correlationId, contentId);
 			},
+			async requestLaunchById(correlationId, id) {
+				return await LibraryClientUtility.$store.requestLaunchById(correlationId, id);
+			},
+			async requestLaunches(correlationId, params) {
+				return await LibraryClientUtility.$store.requestLaunches(correlationId, params);
+			},
+			async requestLocationById(correlationId, id) {
+				return await LibraryClientUtility.$store.requestLocationById(correlationId, id);
+			},
+			async requestLocations(correlationId, params) {
+				return await LibraryClientUtility.$store.requestLocations(correlationId, params);
+			},
 			async requestManufacturers(correlationId) {
 				return await LibraryClientUtility.$store.requestManufacturers(correlationId);
 			},
@@ -716,6 +808,12 @@ class AppStore extends BaseStore {
 			},
 			async setChecklistsSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setChecklistsSearchCriteria(correlationId, value);
+			},
+			async setLaunchesSearchCriteria(correlationId, value) {
+				await LibraryClientUtility.$store.setLaunchesSearchCriteria(correlationId, value);
+			},
+			async setLocationsSearchCriteria(correlationId, value) {
+				await LibraryClientUtility.$store.setLocationsSearchCriteria(correlationId, value);
 			},
 			async setMotorSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setMotorSearchCriteria(correlationId, value);
@@ -796,6 +894,12 @@ class AppStore extends BaseStore {
 					return temp2.filter(l => l.mobile);
 				return temp2;
 			},
+			getLaunchesSearchCriteria() {
+				return LibraryClientUtility.$store.launchesSearchCriteria;
+			},
+			getLocationsSearchCriteria() {
+				return LibraryClientUtility.$store.LocationsSearchCriteria;
+			},
 			getMotorSearchCriteria() {
 				return LibraryClientUtility.$store.motorSearchCriteria;
 			},
@@ -850,6 +954,12 @@ class AppStore extends BaseStore {
 			contentMarkup: [],
 			contentMarkupTtl: 0,
 			contentMarkupTtlDiff: 1000 * 60 * 30,
+			launches: [],
+			launchesTtl: 0,
+			launchesTtlDiff: 1000 * 60 * 30,
+			locations: [],
+			locationsTtl: 0,
+			locationsTtlDiff: 1000 * 60 * 30,
 			manufacturers: [],
 			manufacturersTtl: 0,
 			manufacturersTtlDiff: 1000 * 60 * 30,
