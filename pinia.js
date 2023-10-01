@@ -502,6 +502,28 @@ class AppStore extends BaseStore {
 
 				return Response.error('store', 'saveChecklist', null, null, null, null, correlationId);
 			},
+			async saveLaunch(correlationId, launch) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LAUNCHES);
+				const response = await service.save(correlationId, launch);
+				this.$logger.debug('store', 'saveLaunch', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setLaunch(correlationId, response.results);
+					return Response.success(correlationId, response.results);
+				}
+
+				return Response.error('store', 'saveLaunch', null, null, null, null, correlationId);
+			},
+			async saveLocation(correlationId, launch) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LOCATIONS);
+				const response = await service.save(correlationId, launch);
+				this.$logger.debug('store', 'saveLocation', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setLocation(correlationId, response.results);
+					return Response.success(correlationId, response.results);
+				}
+
+				return Response.error('store', 'saveLocation', null, null, null, null, correlationId);
+			},
 			async savePart(correlationId, part) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_PARTS);
 				const response = await service.save(correlationId, part);
@@ -569,12 +591,6 @@ class AppStore extends BaseStore {
 				this.countriesTtl = LibraryCommonUtility.getTimestamp();
 				this.$logger.debug('store', 'setCountries', 'countries.c', this.countries, correlationId);
 			},
-			async setLaunchesSearchCriteria(correlationId, value) {
-				this.launchesSearchCriteria = value;
-			},
-			async setLocationsSearchCriteria(correlationId, value) {
-				this.locationsSearchCriteria = value;
-			},
 			async setLaunch(correlationId, value) {
 				this.$logger.debug('store', 'setLaunch', 'launches.a', value, correlationId);
 				this.$logger.debug('store', 'setLaunch', 'launches.b', this.launches, correlationId);
@@ -589,6 +605,9 @@ class AppStore extends BaseStore {
 				this.launchesTtl = LibraryCommonUtility.getTimestamp();
 				this.$logger.debug('store', 'setLaunches', 'launches.c', this.launches, correlationId);
 			},
+			async setLaunchesSearchCriteria(correlationId, value) {
+				this.launchesSearchCriteria = value;
+			},
 			async setLocation(correlationId, value) {
 				this.$logger.debug('store', 'setLocation', 'locations.a', value, correlationId);
 				this.$logger.debug('store', 'setLocation', 'locations.b', this.locations, correlationId);
@@ -602,6 +621,9 @@ class AppStore extends BaseStore {
 				this.locations = value;
 				this.locationsTtl = LibraryCommonUtility.getTimestamp();
 				this.$logger.debug('store', 'setLocations', 'locations.c', this.locations, correlationId);
+			},
+			async setLocationsSearchCriteria(correlationId, value) {
+				this.locationsSearchCriteria = value;
 			},
 			async setManufacturers(correlationId, value) {
 				this.$logger.debug('store', 'setManufacturers', 'manufacturers.a', value, correlationId);
@@ -825,6 +847,12 @@ class AppStore extends BaseStore {
 			},
 			async saveChecklist(correlationId, checklist) {
 				return await LibraryClientUtility.$store.saveChecklist(correlationId, checklist);
+			},
+			async saveLaunch(correlationId, checklist) {
+				return await LibraryClientUtility.$store.saveLaunch(correlationId, checklist);
+			},
+			async saveLocation(correlationId, checklist) {
+				return await LibraryClientUtility.$store.saveLocation(correlationId, checklist);
 			},
 			async savePart(correlationId, part) {
 				return await LibraryClientUtility.$store.savePart(correlationId, part);
