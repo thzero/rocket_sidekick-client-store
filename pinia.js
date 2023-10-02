@@ -38,6 +38,7 @@ class AppStore extends BaseStore {
 		return [
 			'checklistsSearchCriteria',
 			'launchesSearchCriteria',
+			'locationsExpanded',
 			'locationsSearchCriteria',
 			'manufacturers',
 			'parts',
@@ -641,6 +642,11 @@ class AppStore extends BaseStore {
 				this.locationsTtl = LibraryCommonUtility.getTimestamp();
 				this.$logger.debug('store', 'setLocations', 'locations.c', this.locations, correlationId);
 			},
+			async setLocationsExpanded(correlationId, value) {
+				if (!value || String.isNullOrEmpty(value.id))
+					return;
+				this.locationsExpanded[value.id] = value.expanded;
+			},
 			async setLocationsSearchCriteria(correlationId, value) {
 				this.locationsSearchCriteria = value;
 			},
@@ -885,6 +891,9 @@ class AppStore extends BaseStore {
 			async setChecklistsSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setChecklistsSearchCriteria(correlationId, value);
 			},
+			async setLocationsExpanded(correlationId, value) {
+				await LibraryClientUtility.$store.setLocationsExpanded(correlationId, value);
+			},
 			async setLaunchesSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setLaunchesSearchCriteria(correlationId, value);
 			},
@@ -976,6 +985,9 @@ class AppStore extends BaseStore {
 			getLocationsSearchCriteria() {
 				return LibraryClientUtility.$store.LocationsSearchCriteria;
 			},
+			getLocationsExpanded() {
+				return LibraryClientUtility.$store.locationsExpanded;
+			},
 			getMotorSearchCriteria() {
 				return LibraryClientUtility.$store.motorSearchCriteria;
 			},
@@ -1037,6 +1049,7 @@ class AppStore extends BaseStore {
 			launchesTtl: 0,
 			launchesTtlDiff: 1000 * 60 * 30,
 			locations: [],
+			locationsExpanded: {},
 			locationsTtl: 0,
 			locationsTtlDiff: 1000 * 60 * 30,
 			manufacturers: [],
