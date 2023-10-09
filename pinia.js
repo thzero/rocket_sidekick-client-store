@@ -299,6 +299,17 @@ class AppStore extends BaseStore {
 				return response;
 			},
 			async requestLocationById(correlationId, id) {
+				// TODO
+				const now = LibraryCommonUtility.getTimestamp();
+				const ttl = this.locationsTtl ? this.locationsTtl : 0;
+				const delta = now - ttl;
+				// if (this.locations && (this.locations.length) > 0 && (delta <= this.locationsTtlDiff))
+				if (this._checkTtl(this.locations, delta, this.locationsTtlDiff)) {
+					const location = this.locations.find(l => l.id === id);
+					if (location && location.iterations)
+						return Response.success(correlationId, location);
+				}
+
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LOCATIONS);
 				const response = await service.retrieve(correlationId, id);
 				this.$logger.debug('store', 'requestLocationById', 'response', response, correlationId);
@@ -311,6 +322,14 @@ class AppStore extends BaseStore {
 				return response;
 			},
 			async requestLocations(correlationId, params) {
+				// TODO
+				const now = LibraryCommonUtility.getTimestamp();
+				const ttl = this.locationsTtl ? this.locationsTtl : 0;
+				const delta = now - ttl;
+				// if (this.locations && (this.locations.length) > 0 && (delta <= this.locationsTtlDiff))
+				if (this._checkTtl(this.locations, delta, this.locationsTtlDiff))
+					return Response.success(correlationId, this.locations);
+
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LOCATIONS);
 				const response = await service.search(correlationId, params);
 				this.$logger.debug('store', 'requestLocations', 'response', response, correlationId);
@@ -631,7 +650,7 @@ class AppStore extends BaseStore {
 			async setLocation(correlationId, value) {
 				this.$logger.debug('store', 'setLocation', 'locations.a', value, correlationId);
 				this.$logger.debug('store', 'setLocation', 'locations.b', this.locations, correlationId);
-				this.locations = LibraryCommonUtility.updateArrayByObject(this.rocketSetups, value);
+				this.locations = LibraryCommonUtility.updateArrayByObject(this.locations, value);
 				this.locationsTtl = LibraryCommonUtility.getTimestamp();
 				this.$logger.debug('store', 'setLocation', 'locations.c', this.locations, correlationId);
 			},
