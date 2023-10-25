@@ -520,10 +520,28 @@ class AppStore extends BaseStore {
 				this.$logger.debug('store', 'saveRocketStagePart', 'response', response, correlationId);
 				return response;
 			},
-			async saveRocketSetup(correlationId, rocket) {
+			async saveRocketSetup(correlationId, rocketSetup) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETSETUPS);
-				const response = await service.save(correlationId, rocket);
+				const response = await service.save(correlationId, rocketSetup);
 				this.$logger.debug('store', 'saveRocketSetup', 'response', response, correlationId);
+				return response;
+			},
+			async saveRocketSetupStage(correlationId, rocketSetup, stage) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETSETUPS);
+				const response = await service.saveStage(correlationId, rocketSetup, stage);
+				this.$logger.debug('store', 'saveRocketSetupStage', 'response', response, correlationId);
+				return response;
+			},
+			async saveRocketSetupStageDelete(correlationId, rocketSetup, id) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETSETUPS);
+				const response = await service.saveStageDelete(correlationId, rocketSetup, id);
+				this.$logger.debug('store', 'saveRocketSetupStageDelete', 'response', response, correlationId);
+				return response;
+			},
+			async saveRocketSetupStagePart(correlationId, rocketSetup, part) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETSETUPS);
+				const response = await service.saveStagePart(correlationId, rocketSetup, part);
+				this.$logger.debug('store', 'saveRocketSetupStagePart', 'response', response, correlationId);
 				return response;
 			},
 			async setChecklist(correlationId, value) {
@@ -849,6 +867,15 @@ class AppStore extends BaseStore {
 			},
 			async saveRocketSetup(correlationId, rocket) {
 				return await LibraryClientUtility.$store.saveRocketSetup(correlationId, rocket);
+			},
+			async saveRocketSetupStage(correlationId, rocket, stage) {
+				return await LibraryClientUtility.$store.saveRocketSetupStage(correlationId, rocket, stage);
+			},
+			async saveRocketSetupStageDelete(correlationId, rocket, id) {
+				return await LibraryClientUtility.$store.saveRocketSetupStageDelete(correlationId, rocket, id);
+			},
+			async saveRocketSetupStagePart(correlationId, rocket, stage) {
+				return await LibraryClientUtility.$store.saveRocketSetupStagePart(correlationId, rocket, stage);
 			},
 			async setChecklistsSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setChecklistsSearchCriteria(correlationId, value);
