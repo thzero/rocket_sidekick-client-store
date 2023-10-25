@@ -89,24 +89,16 @@ class AppStore extends BaseStore {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_CHECKLISTS);
 				const response = await service.copy(correlationId, id);
 				this.$logger.debug('store', 'copyChecklistById', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.setChecklist(correlationId, response.results);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'copyChecklistById', null, null, null, null, correlationId);
 				return response;
 			},
 			async copyPartById(correlationId, id) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_PARTS);
 				const response = await service.copy(correlationId, id);
 				this.$logger.debug('store', 'copyPartById', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.setPart(correlationId, response.results);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'copyParttById', null, null, null, null, correlationId);
 				return response;
 			},
 			async deleteChecklist(correlationId, id) {
@@ -119,12 +111,8 @@ class AppStore extends BaseStore {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_CHECKLISTS);
 				const response = await service.deleteUser(correlationId, id);
 				this.$logger.debug('store', 'deleteChecklistById', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.deleteChecklistUser(correlationId, id);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'deleteChecklistById', null, null, null, null, correlationId);
 				return response;
 			},
 			async deletePart(correlationId, id) {
@@ -137,12 +125,8 @@ class AppStore extends BaseStore {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_PARTS);
 				const response = await service.delete(correlationId, id);
 				this.$logger.debug('store', 'deletePartById', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.deletePart(correlationId, id);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'deletePartById', null, null, null, null, correlationId);
 				return response;
 			},
 			async deleteRocket(correlationId, id) {
@@ -155,12 +139,8 @@ class AppStore extends BaseStore {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
 				const response = await service.delete(correlationId, id);
 				this.$logger.debug('store', 'deleteRocketById', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.deleteRocket(correlationId, id);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'deleteRocketById', null, null, null, null, correlationId);
 				return response;
 			},
 			async deleteRocketSetup(correlationId, id) {
@@ -173,12 +153,8 @@ class AppStore extends BaseStore {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETSETUPS);
 				const response = await service.delete(correlationId, id);
 				this.$logger.debug('store', 'deleteRocketSetupById', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.deleteRocketSetup(correlationId, id);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'deleteRocketSetupById', null, null, null, null, correlationId);
 				return response;
 			},
 			async requestChecklistById(correlationId, id) {
@@ -191,12 +167,8 @@ class AppStore extends BaseStore {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_CHECKLISTS);
 				const response = await service.retrieve(correlationId, id);
 				this.$logger.debug('store', 'requestChecklistById', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.setChecklist(correlationId, response.results);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'requestChecklistById', null, null, null, null, correlationId);
 				return response;
 			},
 			async requestChecklists(correlationId, params) {
@@ -208,7 +180,6 @@ class AppStore extends BaseStore {
 					return Response.success(correlationId, this.checklists);
 				}
 
-				// return Response.error('store', 'requestChecklists', null, null, null, null, correlationId);
 				return response;
 			},
 			async requestContent(correlationId) {
@@ -247,12 +218,8 @@ class AppStore extends BaseStore {
 				const service = LibraryClientUtility.$injector.getService(LibraryClientConstants.InjectorKeys.SERVICE_UTILITY);
 				const response = await service.contentMarkup(correlationId, contentId);
 				this.$logger.debug('store', 'requestContentMarkup', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					this.setContentMarkup(correlationId, response.results);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'requestContentMarkup', null, null, null, null, correlationId);
 				return response;
 			},
 			async requestCountries(correlationId) {
@@ -278,12 +245,8 @@ class AppStore extends BaseStore {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LAUNCHES);
 				const response = await service.retrieve(correlationId, id);
 				this.$logger.debug('store', 'requestLaunchById', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.setLaunch(correlationId, response.results);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'requestRocketById', null, null, null, null, correlationId);
 				return response;
 			},
 			async requestLaunches(correlationId, params) {
@@ -313,12 +276,8 @@ class AppStore extends BaseStore {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LOCATIONS);
 				const response = await service.retrieve(correlationId, id);
 				this.$logger.debug('store', 'requestLocationById', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.setLocation(correlationId, response.results);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'requestRocketById', null, null, null, null, correlationId);
 				return response;
 			},
 			async requestLocations(correlationId, params) {
@@ -399,12 +358,8 @@ class AppStore extends BaseStore {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_PARTS);
 				const response = await service.retrieve(correlationId, id);
 				this.$logger.debug('store', 'requestPartById', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.setPart(correlationId, response.results);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'requestPartById', null, null, null, null, correlationId);
 				return response;
 			},
 			async requestParts(correlationId, params) {
@@ -443,12 +398,8 @@ class AppStore extends BaseStore {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
 				const response = await service.retrieve(correlationId, id);
 				this.$logger.debug('store', 'requestRocketById', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.setRocket(correlationId, response.results);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'requestRocketById', null, null, null, null, correlationId);
 				return response;
 			},
 			async requestRocketByIdGallery(correlationId, id) {
@@ -461,24 +412,16 @@ class AppStore extends BaseStore {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
 				const response = await service.retrieveGallery(correlationId, id);
 				this.$logger.debug('store', 'requestRocketByIdGallery', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.setRocketGallery(correlationId, response.results);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'requestRocketByIdGallery', null, null, null, null, correlationId);
 				return response;
 			},
 			async requestRocketSetupById(correlationId, id) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETSETUPS);
 				const response = await service.retrieve(correlationId, id);
 				this.$logger.debug('store', 'requestRocketSetupById', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.setRocketSetup(correlationId, response.results);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'requestRocketSetupById', null, null, null, null, correlationId);
 				return response;
 			},
 			async requestRockets(correlationId, params) {
@@ -490,7 +433,6 @@ class AppStore extends BaseStore {
 					return Response.success(correlationId, this.rockets);
 				}
 
-				// return Response.error('store', 'requestRockets', null, null, null, null, correlationId);
 				return response;
 			},
 			async requestRocketsGallery(correlationId, params) {
@@ -509,7 +451,6 @@ class AppStore extends BaseStore {
 					return Response.success(correlationId, this.rocketsGallery);
 				}
 
-				// return Response.error('store', 'requestRocketsGallery', null, null, null, null, correlationId);
 				return response;
 			},
 			async requestRocketSetups(correlationId, params) {
@@ -521,55 +462,38 @@ class AppStore extends BaseStore {
 					return Response.success(correlationId, this.rocketSetups);
 				}
 
-				// return Response.error('store', 'requestRocketSetups', null, null, null, null, correlationId);
 				return response;
 			},
 			async saveChecklist(correlationId, checklist) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_CHECKLISTS);
 				const response = await service.save(correlationId, checklist);
 				this.$logger.debug('store', 'saveChecklist', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.setChecklist(correlationId, response.results);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'saveChecklist', null, null, null, null, correlationId);
 				return response;
 			},
 			async saveLaunch(correlationId, launch) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LAUNCHES);
 				const response = await service.save(correlationId, launch);
 				this.$logger.debug('store', 'saveLaunch', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.setLaunch(correlationId, response.results);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'saveLaunch', null, null, null, null, correlationId);
 				return response;
 			},
 			async saveLocation(correlationId, launch) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LOCATIONS);
 				const response = await service.save(correlationId, launch);
 				this.$logger.debug('store', 'saveLocation', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.setLocation(correlationId, response.results);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'saveLocation', null, null, null, null, correlationId);
 				return response;
 			},
 			async savePart(correlationId, part) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_PARTS);
 				const response = await service.save(correlationId, part);
 				this.$logger.debug('store', 'savePart', 'response', response, correlationId);
-				if (Response.hasSucceeded(response)) {
+				if (Response.hasSucceeded(response))
 					await this.setPart(correlationId, response.results);
-					return Response.success(correlationId, response.results);
-				}
-
-				// return Response.error('store', 'savePart', null, null, null, null, correlationId);
 				return response;
 			},
 			async saveRocket(correlationId, rocket) {
@@ -579,23 +503,12 @@ class AppStore extends BaseStore {
 				return response;
 			},
 			async saveRocketStage(correlationId, rocket, stage) {
-				// const temp = LibraryCommonUtility.cloneDeep(rocket);
-				// temp.stages = LibraryCommonUtility.updateArrayByObject(rocket.stages, stage);
-
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
 				const response = await service.saveStage(correlationId, rocket, stage);
 				this.$logger.debug('store', 'saveRocketStage', 'response', response, correlationId);
 				return response;
 			},
 			async saveRocketStageDelete(correlationId, rocket, id) {
-				// const temp = LibraryCommonUtility.cloneDeep(rocket);
-				// LibraryCommonUtility.deleteArrayById(temp.stages, id);
-
-				// temp.stages = temp.stages.sort((a, b) => a.index >= b.index);
-				// let index = 0;
-				// for (const item of temp.stages)
-				// 	item.index = index++;
-				
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
 				const response = await service.saveStageDelete(correlationId, rocket, id);
 				this.$logger.debug('store', 'saveRocketStageDelete', 'response', response, correlationId);
@@ -607,10 +520,28 @@ class AppStore extends BaseStore {
 				this.$logger.debug('store', 'saveRocketStagePart', 'response', response, correlationId);
 				return response;
 			},
-			async saveRocketSetup(correlationId, rocket) {
+			async saveRocketSetup(correlationId, rocketSetup) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETSETUPS);
-				const response = await service.save(correlationId, rocket);
+				const response = await service.save(correlationId, rocketSetup);
 				this.$logger.debug('store', 'saveRocketSetup', 'response', response, correlationId);
+				return response;
+			},
+			async saveRocketSetupStage(correlationId, rocketSetup, stage) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETSETUPS);
+				const response = await service.saveStage(correlationId, rocketSetup, stage);
+				this.$logger.debug('store', 'saveRocketSetupStage', 'response', response, correlationId);
+				return response;
+			},
+			async saveRocketSetupStageDelete(correlationId, rocketSetup, id) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETSETUPS);
+				const response = await service.saveStageDelete(correlationId, rocketSetup, id);
+				this.$logger.debug('store', 'saveRocketSetupStageDelete', 'response', response, correlationId);
+				return response;
+			},
+			async saveRocketSetupStagePart(correlationId, rocketSetup, part) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETSETUPS);
+				const response = await service.saveStagePart(correlationId, rocketSetup, part);
+				this.$logger.debug('store', 'saveRocketSetupStagePart', 'response', response, correlationId);
 				return response;
 			},
 			async setChecklist(correlationId, value) {
@@ -936,6 +867,15 @@ class AppStore extends BaseStore {
 			},
 			async saveRocketSetup(correlationId, rocket) {
 				return await LibraryClientUtility.$store.saveRocketSetup(correlationId, rocket);
+			},
+			async saveRocketSetupStage(correlationId, rocket, stage) {
+				return await LibraryClientUtility.$store.saveRocketSetupStage(correlationId, rocket, stage);
+			},
+			async saveRocketSetupStageDelete(correlationId, rocket, id) {
+				return await LibraryClientUtility.$store.saveRocketSetupStageDelete(correlationId, rocket, id);
+			},
+			async saveRocketSetupStagePart(correlationId, rocket, stage) {
+				return await LibraryClientUtility.$store.saveRocketSetupStagePart(correlationId, rocket, stage);
 			},
 			async setChecklistsSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setChecklistsSearchCriteria(correlationId, value);
