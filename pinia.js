@@ -110,10 +110,10 @@ class AppStore extends BaseStore {
 			},
 			async deleteChecklistById(correlationId, id) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_CHECKLISTS);
-				const response = await service.deleteUser(correlationId, id);
+				const response = await service.delete(correlationId, id);
 				this.$logger.debug('store', 'deleteChecklistById', 'response', response, correlationId);
 				if (Response.hasSucceeded(response))
-					await this.deleteChecklistUser(correlationId, id);
+					await this.deleteChecklist(correlationId, id);
 				return response;
 			},
 			async deletePart(correlationId, id) {
