@@ -744,6 +744,14 @@ class AppStore extends BaseStore {
 			},
 			async setRocketSetupsSearchCriteria(correlationId, value) {
 				this.rocketSetupsSearchCriteria = value;
+			},
+			async startChecklistById(correlationId, id) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_CHECKLISTS);
+				const response = await service.start(correlationId, id);
+				this.$logger.debug('store', 'startChecklistById', 'response', response, correlationId);
+				if (Response.hasSucceeded(response))
+					await this.setChecklist(correlationId, response.results);
+				return response;
 			}
 		};
 	}
@@ -913,6 +921,9 @@ class AppStore extends BaseStore {
 			},
 			async setOnline(correlationId, value) {
 				await LibraryClientUtility.$store.setOnline(correlationId, value);
+			},
+			async startChecklistById(correlationId, id) {
+				return await LibraryClientUtility.$store.startChecklistById(correlationId, id);
 			}
 		};
 	}
