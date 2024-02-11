@@ -38,7 +38,7 @@ class AppStore extends BaseStore {
 	_initPluginPersistConfigPaths() {
 		return [
 			'checklistsSearchCriteria',
-			'launchesSearchCriteria',
+			'launchesSettings',
 			'locationsExpanded',
 			'locationsSearchCriteria',
 			'manufacturers',
@@ -597,8 +597,8 @@ class AppStore extends BaseStore {
 				this.launchesTtl = LibraryMomentUtility.getTimestamp();
 				this.$logger.debug('store', 'setLaunches', 'launches.c', this.launches, correlationId);
 			},
-			async setLaunchesSearchCriteria(correlationId, value) {
-				this.launchesSearchCriteria = value;
+			async setLaunchesSettings(correlationId, value) {
+				this.launchesSettings = value;
 			},
 			async setLocation(correlationId, value) {
 				this.$logger.debug('store', 'setLocation', 'locations.a', value, correlationId);
@@ -892,8 +892,8 @@ class AppStore extends BaseStore {
 			async setLocationsExpanded(correlationId, value) {
 				await LibraryClientUtility.$store.setLocationsExpanded(correlationId, value);
 			},
-			async setLaunchesSearchCriteria(correlationId, value) {
-				await LibraryClientUtility.$store.setLaunchesSearchCriteria(correlationId, value);
+			async setLaunchesSettings(correlationId, value) {
+				await LibraryClientUtility.$store.setLaunchesSettings(correlationId, value);
 			},
 			async setLocationsSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setLocationsSearchCriteria(correlationId, value);
@@ -980,8 +980,8 @@ class AppStore extends BaseStore {
 					return temp2.filter(l => l.mobile);
 				return temp2;
 			},
-			getLaunchesSearchCriteria() {
-				return LibraryClientUtility.$store.launchesSearchCriteria;
+			getLaunchesSettings() {
+				return LibraryClientUtility.$store.launchesSettings;
 			},
 			getLocationsSearchCriteria() {
 				return LibraryClientUtility.$store.LocationsSearchCriteria;
@@ -1047,10 +1047,12 @@ class AppStore extends BaseStore {
 			countriesTtl: 0,
 			countriesTtlDiff: 1000 * 60 * 30,
 			launches: [],
+			launchesSettings: {},
 			launchesTtl: 0,
 			launchesTtlDiff: 1000 * 60 * 30,
 			locations: [],
 			locationsExpanded: {},
+			locationsSearchCriteria: {},
 			locationsTtl: 0,
 			locationsTtlDiff: 1000 * 60 * 30,
 			manufacturers: [],
