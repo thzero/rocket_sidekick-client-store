@@ -116,6 +116,20 @@ class AppStore extends BaseStore {
 					await this.deleteChecklist(correlationId, id);
 				return response;
 			},
+			async deleteLaunch(correlationId, id) {
+				this.$logger.debug('store', 'deleteLaunch', 'launches.a', id, correlationId);
+				this.$logger.debug('store', 'deleteLaunch', 'launches.b', this.launches, correlationId);
+				this.launches = LibraryCommonUtility.removeArrayById(this.launches, id);
+				this.$logger.debug('store', 'deleteLaunch', 'launches.c', this.launches, correlationId);
+			},
+			async deleteLaunchById(correlationId, id) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LAUNCHES);
+				const response = await service.delete(correlationId, id);
+				this.$logger.debug('store', 'deleteLaunchById', 'response', response, correlationId);
+				if (Response.hasSucceeded(response))
+					await this.deleteLaunch(correlationId, id);
+				return response;
+			},
 			async deletePart(correlationId, id) {
 				this.$logger.debug('store', 'deletePart', 'part.a', id, correlationId);
 				this.$logger.debug('store', 'deletePart', 'parts.b', this.parts, correlationId);
@@ -774,6 +788,9 @@ class AppStore extends BaseStore {
 			},
 			async deleteChecklistById(correlationId, id) {
 				return await LibraryClientUtility.$store.deleteChecklistById(correlationId, id);
+			},
+			async deleteLaunchById(correlationId, id) {
+				return await LibraryClientUtility.$store.deleteLaunchById(correlationId, id);
 			},
 			async deletePartById(correlationId, id) {
 				return await LibraryClientUtility.$store.deletePartById(correlationId, id);
