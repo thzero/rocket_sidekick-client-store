@@ -495,9 +495,9 @@ class AppStore extends BaseStore {
 					await this.setLaunch(correlationId, response.results);
 				return response;
 			},
-			async saveLocation(correlationId, launch) {
+			async saveLocation(correlationId, location) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LOCATIONS);
-				const response = await service.save(correlationId, launch);
+				const response = await service.save(correlationId, location);
 				this.$logger.debug('store', 'saveLocation', 'response', response, correlationId);
 				if (Response.hasSucceeded(response))
 					await this.setLocation(correlationId, response.results);
@@ -600,7 +600,7 @@ class AppStore extends BaseStore {
 			async setLaunch(correlationId, value) {
 				this.$logger.debug('store', 'setLaunch', 'launches.a', value, correlationId);
 				this.$logger.debug('store', 'setLaunch', 'launches.b', this.launches, correlationId);
-				this.launches = LibraryCommonUtility.updateArrayByObject(this.rocketSetups, value);
+				this.launches = LibraryCommonUtility.updateArrayByObject(this.launches, value);
 				this.launchesTtl = LibraryMomentUtility.getTimestamp();
 				this.$logger.debug('store', 'setLaunch', 'launches.c', this.launches, correlationId);
 			},
@@ -870,11 +870,11 @@ class AppStore extends BaseStore {
 			async saveChecklist(correlationId, checklist) {
 				return await LibraryClientUtility.$store.saveChecklist(correlationId, checklist);
 			},
-			async saveLaunch(correlationId, checklist) {
-				return await LibraryClientUtility.$store.saveLaunch(correlationId, checklist);
+			async saveLaunch(correlationId, launch) {
+				return await LibraryClientUtility.$store.saveLaunch(correlationId, launch);
 			},
-			async saveLocation(correlationId, checklist) {
-				return await LibraryClientUtility.$store.saveLocation(correlationId, checklist);
+			async saveLocation(correlationId, location) {
+				return await LibraryClientUtility.$store.saveLocation(correlationId, location);
 			},
 			async savePart(correlationId, part) {
 				return await LibraryClientUtility.$store.savePart(correlationId, part);
