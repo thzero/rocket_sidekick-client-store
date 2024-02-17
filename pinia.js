@@ -38,6 +38,7 @@ class AppStore extends BaseStore {
 	_initPluginPersistConfigPaths() {
 		return [
 			'checklistsSearchCriteria',
+			'inventoryExpanded',
 			'inventorySearchCriteria',
 			'launchesSettings',
 			'locationsExpanded',
@@ -625,6 +626,9 @@ class AppStore extends BaseStore {
 				this.inventoryTtl = LibraryMomentUtility.getTimestamp();
 				this.$logger.debug('store', 'setInventory', 'inventory.c', this.inventory, correlationId);
 			},
+			async setInventoryExpanded(correlationId, value) {
+				this.inventoryExpanded = value ?? [];
+			},
 			async setInventorySearchCriteria(correlationId, value) {
 				this.inventorySearchCriteria = value;
 			},
@@ -943,6 +947,9 @@ class AppStore extends BaseStore {
 			async setChecklistsSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setChecklistsSearchCriteria(correlationId, value);
 			},
+			async setInventoryExpanded(correlationId, value) {
+				await LibraryClientUtility.$store.setInventoryExpanded(correlationId, value);
+			},
 			async setInventorySearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setInventorySearchCriteria(correlationId, value);
 			},
@@ -1037,6 +1044,9 @@ class AppStore extends BaseStore {
 					return temp2.filter(l => l.mobile);
 				return temp2;
 			},
+			getInventoryExpanded() {
+				return LibraryClientUtility.$store.inventoryExpanded;
+			},
 			getInventorySearchCriteria() {
 				return LibraryClientUtility.$store.inventorySearchCriteria;
 			},
@@ -1107,6 +1117,7 @@ class AppStore extends BaseStore {
 			countriesTtl: 0,
 			countriesTtlDiff: 1000 * 60 * 30,
 			inventory: [],
+			inventoryExpanded: [],
 			inventorySearchCriteria: {},
 			inventoryTtl: 0,
 			inventoryTtlDiff: 1000 * 60 * 30,
