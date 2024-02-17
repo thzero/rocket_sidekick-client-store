@@ -38,6 +38,7 @@ class AppStore extends BaseStore {
 	_initPluginPersistConfigPaths() {
 		return [
 			'checklistsSearchCriteria',
+			'inventorySearchCriteria',
 			'launchesSettings',
 			'locationsExpanded',
 			'locationsSearchCriteria',
@@ -254,6 +255,18 @@ class AppStore extends BaseStore {
 					return Response.success(correlationId, this.countries);
 				}
 
+				return response;
+			},
+			async requestInventory(correlationId, params) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_INVENTORY);
+				const response = await service.retrieve(correlationId);
+				this.$logger.debug('store', 'requestInventory', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setInventory(correlationId, response.results);
+					return Response.success(correlationId, this.inventory);
+				}
+
+				// return Response.error('store', 'requestInventory', null, null, null, null, correlationId);
 				return response;
 			},
 			async requestLaunchById(correlationId, id, editable) {
@@ -487,6 +500,14 @@ class AppStore extends BaseStore {
 					await this.setChecklist(correlationId, response.results);
 				return response;
 			},
+			async saveInventory(correlationId, inventory) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_INVENTORY);
+				const response = await service.save(correlationId, inventory);
+				this.$logger.debug('store', 'saveInventory', 'response', response, correlationId);
+				if (Response.hasSucceeded(response))
+					await this.setInventory(correlationId, response.results);
+				return response;
+			},
 			async saveLaunch(correlationId, launch) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LAUNCHES);
 				const response = await service.save(correlationId, launch);
@@ -495,9 +516,9 @@ class AppStore extends BaseStore {
 					await this.setLaunch(correlationId, response.results);
 				return response;
 			},
-			async saveLocation(correlationId, launch) {
+			async saveLocation(correlationId, location) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LOCATIONS);
-				const response = await service.save(correlationId, launch);
+				const response = await service.save(correlationId, location);
 				this.$logger.debug('store', 'saveLocation', 'response', response, correlationId);
 				if (Response.hasSucceeded(response))
 					await this.setLocation(correlationId, response.results);
@@ -597,10 +618,20 @@ class AppStore extends BaseStore {
 				this.countriesTtl = LibraryMomentUtility.getTimestamp();
 				this.$logger.debug('store', 'setCountries', 'countries.c', this.countries, correlationId);
 			},
+			async setInventory(correlationId, value) {
+				this.$logger.debug('store', 'setInventory', 'inventory.a', value, correlationId);
+				this.$logger.debug('store', 'setInventory', 'inventory.b', this.inventory, correlationId);
+				this.inventory = value;
+				this.inventoryTtl = LibraryMomentUtility.getTimestamp();
+				this.$logger.debug('store', 'setInventory', 'inventory.c', this.inventory, correlationId);
+			},
+			async setInventorySearchCriteria(correlationId, value) {
+				this.inventorySearchCriteria = value;
+			},
 			async setLaunch(correlationId, value) {
 				this.$logger.debug('store', 'setLaunch', 'launches.a', value, correlationId);
 				this.$logger.debug('store', 'setLaunch', 'launches.b', this.launches, correlationId);
-				this.launches = LibraryCommonUtility.updateArrayByObject(this.rocketSetups, value);
+				this.launches = LibraryCommonUtility.updateArrayByObject(this.launches, value);
 				this.launchesTtl = LibraryMomentUtility.getTimestamp();
 				this.$logger.debug('store', 'setLaunch', 'launches.c', this.launches, correlationId);
 			},
@@ -816,6 +847,9 @@ class AppStore extends BaseStore {
 			async requestCountries(correlationId) {
 				return await LibraryClientUtility.$store.requestCountries(correlationId);
 			},
+			async requestInventory(correlationId, params) {
+				return await LibraryClientUtility.$store.requestInventory(correlationId, params);
+			},
 			async requestLaunchById(correlationId, id, editable) {
 				return await LibraryClientUtility.$store.requestLaunchById(correlationId, id, editable);
 			},
@@ -870,11 +904,14 @@ class AppStore extends BaseStore {
 			async saveChecklist(correlationId, checklist) {
 				return await LibraryClientUtility.$store.saveChecklist(correlationId, checklist);
 			},
-			async saveLaunch(correlationId, checklist) {
-				return await LibraryClientUtility.$store.saveLaunch(correlationId, checklist);
+			async saveInventory(correlationId, inventory) {
+				return await LibraryClientUtility.$store.saveInventory(correlationId, inventory);
 			},
-			async saveLocation(correlationId, checklist) {
-				return await LibraryClientUtility.$store.saveLocation(correlationId, checklist);
+			async saveLaunch(correlationId, launch) {
+				return await LibraryClientUtility.$store.saveLaunch(correlationId, launch);
+			},
+			async saveLocation(correlationId, location) {
+				return await LibraryClientUtility.$store.saveLocation(correlationId, location);
 			},
 			async savePart(correlationId, part) {
 				return await LibraryClientUtility.$store.savePart(correlationId, part);
@@ -905,6 +942,9 @@ class AppStore extends BaseStore {
 			},
 			async setChecklistsSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setChecklistsSearchCriteria(correlationId, value);
+			},
+			async setInventorySearchCriteria(correlationId, value) {
+				await LibraryClientUtility.$store.setInventorySearchCriteria(correlationId, value);
 			},
 			async setLocationsExpanded(correlationId, value) {
 				await LibraryClientUtility.$store.setLocationsExpanded(correlationId, value);
@@ -997,6 +1037,9 @@ class AppStore extends BaseStore {
 					return temp2.filter(l => l.mobile);
 				return temp2;
 			},
+			getInventorySearchCriteria() {
+				return LibraryClientUtility.$store.inventorySearchCriteria;
+			},
 			getLaunchesSettings() {
 				return LibraryClientUtility.$store.launchesSettings;
 			},
@@ -1063,6 +1106,10 @@ class AppStore extends BaseStore {
 			countries: [],
 			countriesTtl: 0,
 			countriesTtlDiff: 1000 * 60 * 30,
+			inventory: [],
+			inventorySearchCriteria: {},
+			inventoryTtl: 0,
+			inventoryTtlDiff: 1000 * 60 * 30,
 			launches: [],
 			launchesSettings: {},
 			launchesTtl: 0,
