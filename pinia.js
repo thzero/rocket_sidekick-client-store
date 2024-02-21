@@ -879,7 +879,7 @@ class AppStore extends BaseStore {
 				return await LibraryClientUtility.$store.requestMotorSearchReset(correlationId);
 			},
 			async requestPartById(correlationId, id, editable) {
-				return await LibraryClientUtility.$store.requestPartById(correlationId, i, editabled);
+				return await LibraryClientUtility.$store.requestPartById(correlationId, id, editable);
 			},
 			async requestParts(correlationId, params) {
 				return await LibraryClientUtility.$store.requestParts(correlationId, params);
