@@ -107,7 +107,7 @@ class AppStore extends BaseStore {
 			async deleteChecklist(correlationId, id) {
 				this.$logger.debug('store', 'deleteChecklist', 'checklist.a', id, correlationId);
 				this.$logger.debug('store', 'deleteChecklist', 'checklist.b', this.checklists, correlationId);
-				this.checklists = LibraryCommonUtility.removeArrayById(this.checklists, id);
+				this.checklists = LibraryCommonUtility.deleteArrayById(this.checklists, id);
 				this.$logger.debug('store', 'deleteChecklist', 'checklist.c', this.checklists, correlationId);
 			},
 			async deleteChecklistById(correlationId, id) {
@@ -121,7 +121,7 @@ class AppStore extends BaseStore {
 			async deleteLaunch(correlationId, id) {
 				this.$logger.debug('store', 'deleteLaunch', 'launches.a', id, correlationId);
 				this.$logger.debug('store', 'deleteLaunch', 'launches.b', this.launches, correlationId);
-				this.launches = LibraryCommonUtility.removeArrayById(this.launches, id);
+				this.launches = LibraryCommonUtility.deleteArrayById(this.launches, id);
 				this.$logger.debug('store', 'deleteLaunch', 'launches.c', this.launches, correlationId);
 			},
 			async deleteLaunchById(correlationId, id) {
@@ -135,7 +135,7 @@ class AppStore extends BaseStore {
 			async deletePart(correlationId, id) {
 				this.$logger.debug('store', 'deletePart', 'part.a', id, correlationId);
 				this.$logger.debug('store', 'deletePart', 'parts.b', this.parts, correlationId);
-				this.parts = LibraryCommonUtility.removeArrayById(this.parts, id);
+				this.parts = LibraryCommonUtility.deleteArrayById(this.parts, id);
 				this.$logger.debug('store', 'deletePart', 'parts.c', this.parts, correlationId);
 			},
 			async deletePartById(correlationId, id) {
@@ -149,7 +149,7 @@ class AppStore extends BaseStore {
 			async deleteRocket(correlationId, id) {
 				this.$logger.debug('store', 'deleteRocket', 'rocket.a', id, correlationId);
 				this.$logger.debug('store', 'deleteRocket', 'rockets.b', this.rockets, correlationId);
-				this.rockets = LibraryCommonUtility.removeArrayById(this.rockets, id);
+				this.rockets = LibraryCommonUtility.deleteArrayById(this.rockets, id);
 				this.$logger.debug('store', 'deleteRocket', 'rockets.c', this.rockets, correlationId);
 			},
 			async deleteRocketById(correlationId, id) {
@@ -163,7 +163,7 @@ class AppStore extends BaseStore {
 			async deleteRocketSetup(correlationId, id) {
 				this.$logger.debug('store', 'deleteRocketSetup', 'rocketSetup.a', id, correlationId);
 				this.$logger.debug('store', 'deleteRocketSetup', 'rocketSetups.b', this.rocketSetups, correlationId);
-				this.rocketSetups = LibraryCommonUtility.removeArrayById(this.rocketSetups, id);
+				this.rocketSetups = LibraryCommonUtility.deleteArrayById(this.rocketSetups, id);
 				this.$logger.debug('store', 'deleteRocketSetup', 'rocketSetups.c', this.rocketSetups, correlationId);
 			},
 			async deleteRocketSetupById(correlationId, id) {
