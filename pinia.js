@@ -349,7 +349,7 @@ class AppStore extends BaseStore {
 				return response;
 			},
 			async requestMotor(correlationId, motorId) {
-				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_EXTERNAL_MOTOR_SEARCH);
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_MOTORS);
 				const response = await service.motor(correlationId, motorId, this.motorSearchResults);
 				this.$logger.debug('store', 'requestMotor', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
@@ -361,7 +361,7 @@ class AppStore extends BaseStore {
 				return response;
 			},
 			async requestMotorSearch(correlationId, criteria) {
-				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_EXTERNAL_MOTOR_SEARCH);
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_MOTORS);
 				const response = await service.search(correlationId, criteria, this.motorSearchResults);
 				this.$logger.debug('store', 'requestMotorSearch', 'response', response, correlationId);
 				if (Response.hasSucceeded(response)) {
