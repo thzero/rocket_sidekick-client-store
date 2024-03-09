@@ -39,7 +39,7 @@ class AppStore extends BaseStore {
 		return [
 			'checklistsSearchCriteria',
 			'inventoryExpanded',
-			'inventorySearchCriteria',
+			'inventorySettings',
 			'launchesSettings',
 			'locationsExpanded',
 			'locationsSearchCriteria',
@@ -629,8 +629,8 @@ class AppStore extends BaseStore {
 			async setInventoryExpanded(correlationId, value) {
 				this.inventoryExpanded = value ?? [];
 			},
-			async setInventorySearchCriteria(correlationId, value) {
-				this.inventorySearchCriteria = value;
+			async setInventorySettings(correlationId, value) {
+				this.inventorySettings = value;
 			},
 			async setLaunch(correlationId, value) {
 				this.$logger.debug('store', 'setLaunch', 'launches.a', value, correlationId);
@@ -950,8 +950,8 @@ class AppStore extends BaseStore {
 			async setInventoryExpanded(correlationId, value) {
 				await LibraryClientUtility.$store.setInventoryExpanded(correlationId, value);
 			},
-			async setInventorySearchCriteria(correlationId, value) {
-				await LibraryClientUtility.$store.setInventorySearchCriteria(correlationId, value);
+			async setInventorySettings(correlationId, value) {
+				await LibraryClientUtility.$store.setInventorySettings(correlationId, value);
 			},
 			async setLocationsExpanded(correlationId, value) {
 				await LibraryClientUtility.$store.setLocationsExpanded(correlationId, value);
@@ -1047,8 +1047,8 @@ class AppStore extends BaseStore {
 			getInventoryExpanded() {
 				return LibraryClientUtility.$store.inventoryExpanded;
 			},
-			getInventorySearchCriteria() {
-				return LibraryClientUtility.$store.inventorySearchCriteria;
+			getInventorySettings() {
+				return LibraryClientUtility.$store.inventorySettings;
 			},
 			getLaunchesSettings() {
 				return LibraryClientUtility.$store.launchesSettings;
@@ -1118,7 +1118,7 @@ class AppStore extends BaseStore {
 			countriesTtlDiff: 1000 * 60 * 30,
 			inventory: [],
 			inventoryExpanded: [],
-			inventorySearchCriteria: {},
+			inventorySettings: {},
 			inventoryTtl: 0,
 			inventoryTtlDiff: 1000 * 60 * 30,
 			launches: [],
