@@ -1103,6 +1103,7 @@ class AppStore extends BaseStore {
 	_initStoreConfigStateBase() {
 		return {
 			checklists: [],
+			checklistsDragItem: null,
 			checklistsSearchCriteria: {},
 			checkliststTtl: 0,
 			checklistsTtlDiff: 1000 * 60 * 30,
