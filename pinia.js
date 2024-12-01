@@ -581,6 +581,18 @@ class AppStore extends BaseStore {
 				this.$logger.debug('store', 'saveRocketSetupStagePart', 'response', response, correlationId);
 				return response;
 			},
+			async saveRocketVideo(correlationId, rocket, stage) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
+				const response = await service.saveVideo(correlationId, rocket, stage);
+				this.$logger.debug('store', 'saveRocketVideo', 'response', response, correlationId);
+				return response;
+			},
+			async saveRocketVideoDelete(correlationId, rocket, id) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
+				const response = await service.saveVideoDelete(correlationId, rocket, id);
+				this.$logger.debug('store', 'saveRocketVideoDelete', 'response', response, correlationId);
+				return response;
+			},
 			async setChecklist(correlationId, value) {
 				this.$logger.debug('store', 'setChecklist', 'checklist.a', value, correlationId);
 				this.$logger.debug('store', 'setChecklist', 'checklists.b', this.checklists, correlationId);
@@ -926,6 +938,9 @@ class AppStore extends BaseStore {
 			async saveRocketStage(correlationId, rocket, stage) {
 				return await LibraryClientUtility.$store.saveRocketStage(correlationId, rocket, stage);
 			},
+			async saveRocketVideo(correlationId, rocket, stage) {
+				return await LibraryClientUtility.$store.saveRocketVideo(correlationId, rocket, stage);
+			},
 			async saveRocketStageDelete(correlationId, rocket, id) {
 				return await LibraryClientUtility.$store.saveRocketStageDelete(correlationId, rocket, id);
 			},
@@ -943,6 +958,9 @@ class AppStore extends BaseStore {
 			},
 			async saveRocketSetupStagePart(correlationId, rocket, stage) {
 				return await LibraryClientUtility.$store.saveRocketSetupStagePart(correlationId, rocket, stage);
+			},
+			async saveRocketVideoDelete(correlationId, rocket, id) {
+				return await LibraryClientUtility.$store.saveRocketVideoDelete(correlationId, rocket, id);
 			},
 			async setChecklistsSearchCriteria(correlationId, value) {
 				await LibraryClientUtility.$store.setChecklistsSearchCriteria(correlationId, value);
