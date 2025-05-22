@@ -132,6 +132,20 @@ class AppStore extends BaseStore {
 					await this.deleteLaunch(correlationId, id);
 				return response;
 			},
+			async deleteLocation(correlationId, id) {
+				this.$logger.debug('store', 'deleteLocation', 'locations.a', id, correlationId);
+				this.$logger.debug('store', 'deleteLocation', 'locations.b', this.locations, correlationId);
+				this.locations = LibraryCommonUtility.deleteArrayById(this.locations, id);
+				this.$logger.debug('store', 'deleteLocation', 'locations.c', this.locations, correlationId);
+			},
+			async deleteLocationById(correlationId, id) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LOCATIONS);
+				const response = await service.delete(correlationId, id);
+				this.$logger.debug('store', 'deleteLocationById', 'response', response, correlationId);
+				if (Response.hasSucceeded(response))
+					await this.deleteLocation(correlationId, id);
+				return response;
+			},
 			async deletePart(correlationId, id) {
 				this.$logger.debug('store', 'deletePart', 'part.a', id, correlationId);
 				this.$logger.debug('store', 'deletePart', 'parts.b', this.parts, correlationId);
@@ -838,6 +852,9 @@ class AppStore extends BaseStore {
 			},
 			async deleteLaunchById(correlationId, id) {
 				return await LibraryClientUtility.$store.deleteLaunchById(correlationId, id);
+			},
+			async deleteLocationById(correlationId, id) {
+				return await LibraryClientUtility.$store.deleteLocationById(correlationId, id);
 			},
 			async deletePartById(correlationId, id) {
 				return await LibraryClientUtility.$store.deletePartById(correlationId, id);
