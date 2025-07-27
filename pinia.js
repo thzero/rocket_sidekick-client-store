@@ -496,6 +496,40 @@ class AppStore extends BaseStore {
 
 				return response;
 			},
+			async requestRocketsGalleryGamerTag(correlationId, params) {
+				const tag = params.gamerTag;
+				this.$logger.debug('store', 'requestRocketsGalleryGamerTag', 'tag', tag, correlationId);
+				const now = LibraryMomentUtility.getTimestamp();
+				const ttlContent = this.rocketsGalleryGamerTagTtl[tag] ? this.rocketsGalleryGamerTagTtl[tag] : 0;
+				const delta = now - ttlContent;
+				const rockets = this.rocketsGalleryGamerTag[tag];
+				if (rockets) {
+					// if (this.rocketsGalleryGamerTag && (this.rocketsGalleryGamerTag.length > 0) && (delta <= this.rocketsGalleryGamerTagTtlDiff))
+					if (this._checkTtl(this.rocketsGalleryGamerTag[tag], delta, this.rocketsGalleryGamerTagTtlDiff))
+						return Response.success(correlationId, this.rocketsGalleryGamerTag[tag]);
+				}
+
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
+				const response = await service.searchGallery(correlationId, params);
+				this.$logger.debug('store', 'requestRocketsGalleryGamerTag', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setRocketsGalleryGamerTag(correlationId, tag, response.results.data);
+					return Response.success(correlationId, this.rocketsGalleryGamerTag[tag]);
+				}
+
+				return response;
+			},
+			async requestRocketsGalleryUser(correlationId, params) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
+				const response = await service.searchGallery(correlationId, params);
+				this.$logger.debug('store', 'requestRocketsGalleryUser', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setRocketsGalleryUser(correlationId, response.results.data);
+					return Response.success(correlationId, this.rocketsGalleryUser);
+				}
+
+				return response;
+			},
 			async requestRocketSetups(correlationId, params) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETSETUPS);
 				const response = await service.search(correlationId, params);
@@ -802,6 +836,20 @@ class AppStore extends BaseStore {
 				this.rocketsGalleryTtl = LibraryMomentUtility.getTimestamp();
 				this.$logger.debug('store', 'setRocketsGallery', 'rocketsGallery.c', this.rocketsGallery, correlationId);
 			},
+			async setRocketsGalleryGamerTag(correlationId, tag, value) {
+				this.$logger.debug('store', 'setRocketsGalleryGamerTag', 'rockets.a', value, correlationId);
+				this.$logger.debug('store', 'setRocketsGalleryGamerTag', 'rocketsGalleryGamerTag.b', this.rocketsGalleryGamerTag[tag], correlationId);
+				this.rocketsGalleryGamerTag[tag] = value;
+				this.rocketsGalleryGamerTagTtl[tag] = LibraryMomentUtility.getTimestamp();
+				this.$logger.debug('store', 'setRocketsGalleryGamerTag', 'rocketsGalleryGamerTag.c', this.rocketsGalleryGamerTag[tag], correlationId);
+			},
+			async setRocketsGalleryUser(correlationId, value) {
+				this.$logger.debug('store', 'setRocketsGalleryUser', 'rockets.a', value, correlationId);
+				this.$logger.debug('store', 'setRocketsGalleryUser', 'rocketsGalleryUser.b', this.rocketsGalleryUser, correlationId);
+				this.rocketsGalleryUser = value;
+				this.rocketsGalleryUserTtl = LibraryMomentUtility.getTimestamp();
+				this.$logger.debug('store', 'setRocketsGalleryUser', 'rocketsGalleryUser.c', this.rocketsGalleryUser, correlationId);
+			},
 			async setRocketGallery(correlationId, value) {
 				this.$logger.debug('store', 'setRocketGallery', 'rocket.a', value, correlationId);
 				this.$logger.debug('store', 'setRocketGallery', 'rocketsGallery.b', this.rocketsGallery, correlationId);
@@ -930,6 +978,12 @@ class AppStore extends BaseStore {
 			},
 			async requestRocketsGallery(correlationId, params) {
 				return await LibraryClientUtility.$store.requestRocketsGallery(correlationId, params);
+			},
+			async requestRocketsGalleryGamerTag(correlationId, params) {
+				return await LibraryClientUtility.$store.requestRocketsGalleryGamerTag(correlationId, params);
+			},
+			async requestRocketsGalleryUser(correlationId, params) {
+				return await LibraryClientUtility.$store.requestRocketsGalleryUser(correlationId, params);
 			},
 			async requestRocketSetups(correlationId, params) {
 				return await LibraryClientUtility.$store.requestRocketSetups(correlationId, params);
@@ -1179,9 +1233,15 @@ class AppStore extends BaseStore {
 			partsSearchCriteria: {},
 			rockets: [],
 			rocketsExpanded: {},	
-			rocketsGallery: [],
+			rocketsGallery: [],	
+			rocketsGalleryGamerTag: {},
+			rocketsGalleryGamerTagTtl: [],
+			rocketsGalleryGamerTagTtlDiff: 1000 * 60 * 30,
 			rocketsGalleryTtl: 0,
 			rocketsGalleryTtlDiff: 1000 * 60 * 30,
+			rocketsGalleryUser: [],
+			rocketsGalleryUserTtl: 0,
+			rocketsGalleryUserTtlDiff: 1000 * 60 * 30,
 			rocketsSearchCriteria: {},
 			rocketSetups: [],
 			rocketSetupsExpanded: {},
