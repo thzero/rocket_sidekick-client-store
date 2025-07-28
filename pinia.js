@@ -459,6 +459,21 @@ class AppStore extends BaseStore {
 					await this.setRocketGallery(correlationId, response.results);
 				return response;
 			},
+			async requestRocketByIdGalleryGamerTag(correlationId, tag, id) {
+				const rockets = this.rocketsGalleryGamerTag[tag];
+				let rocket = null;
+				if (rockets)
+					rocket = rockets.find(l => l.id === id);
+				if (rocket && rocket.createdTimestamp)
+					return Response.success(correlationId, rocket);
+
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
+				const response = await service.retrieveGallery(correlationId, id);
+				this.$logger.debug('store', 'requestRocketByIdGalleryGamerTag', 'response', response, correlationId);
+				if (Response.hasSucceeded(response))
+					await this.setRocketGalleryGamerTag(correlationId, tag, response.results);
+				return response;
+			},
 			async requestRocketSetupById(correlationId, id, editable) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETSETUPS);
 				const response = await service.retrieve(correlationId, id);
@@ -506,7 +521,7 @@ class AppStore extends BaseStore {
 				if (rockets) {
 					// if (this.rocketsGalleryGamerTag && (this.rocketsGalleryGamerTag.length > 0) && (delta <= this.rocketsGalleryGamerTagTtlDiff))
 					if (this._checkTtl(this.rocketsGalleryGamerTag[tag], delta, this.rocketsGalleryGamerTagTtlDiff))
-						return Response.success(correlationId, this.rocketsGalleryGamerTag[tag]);
+						return Response.success(correlationId, rockets);
 				}
 
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_ROCKETS);
@@ -853,9 +868,29 @@ class AppStore extends BaseStore {
 			async setRocketGallery(correlationId, value) {
 				this.$logger.debug('store', 'setRocketGallery', 'rocket.a', value, correlationId);
 				this.$logger.debug('store', 'setRocketGallery', 'rocketsGallery.b', this.rocketsGallery, correlationId);
+
+				let rocket = this.rocketsGallery.find(l => l.id === value.id);
+				if (!rocket || !rocket.createdTimestamp)
+					return Response.success(correlationId, rocket);
+
 				this.rocketsGallery = LibraryCommonUtility.updateArrayByObject(this.rocketsGallery, value);
 				this.rocketsGalleryTtl = LibraryMomentUtility.getTimestamp();
 				this.$logger.debug('store', 'setRocketGallery', 'rocketsGallery.c', this.rocketsGallery, correlationId);
+			},
+			async setRocketGalleryGamerTag(correlationId, tag, value) {
+				this.$logger.debug('store', 'setRocketGalleryGamerTag', 'tag', tag, correlationId);
+				this.$logger.debug('store', 'setRocketGalleryGamerTag', 'rocket.a', value, correlationId);
+				this.$logger.debug('store', 'setRocketGalleryGamerTag', 'rocketsGalleryGamerTag.b', this.rocketsGallery, correlationId);
+				let rockets = this.rocketsGalleryGamerTag[tag];
+				rockets = rockets ?? [];
+
+				let rocket = rockets.find(l => l.id === value.id);
+				if (!rocket || !rocket.createdTimestamp)
+					return Response.success(correlationId, rocket);
+
+				this.rocketsGalleryGamerTag[tag] = LibraryCommonUtility.updateArrayByObject(rockets, value);
+				this.rocketsGalleryGamerTagTtl[tag] = LibraryMomentUtility.getTimestamp();
+				this.$logger.debug('store', 'setRocketGalleryGamerTag', 'rocketsGalleryGamerTag.c', this.rocketsGalleryGamerTag[tag], correlationId);
 			},
 			async setRocketsSearchCriteria(correlationId, value) {
 				this.rocketsSearchCriteria = value;
@@ -969,6 +1004,9 @@ class AppStore extends BaseStore {
 			},
 			async requestRocketByIdGallery(correlationId, id) {
 				return await LibraryClientUtility.$store.requestRocketByIdGallery(correlationId, id);
+			},
+			async requestRocketByIdGalleryGamerTag(correlationId, tag, id) {
+				return await LibraryClientUtility.$store.requestRocketByIdGalleryGamerTag(correlationId, tag, id);
 			},
 			async requestRocketSetupById(correlationId, id, editable) {
 				return await LibraryClientUtility.$store.requestRocketSetupById(correlationId, id, editable);
