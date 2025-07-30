@@ -304,6 +304,58 @@ class AppStore extends BaseStore {
 				// return Response.error('store', 'requestLaunches', null, null, null, null, correlationId);
 				return response;
 			},
+			async requestLaunchesGallery(correlationId, params) {
+				const now = LibraryMomentUtility.getTimestamp();
+				const ttlContent = this.launchesGalleryTtl ? this.launchesGalleryTtl : 0;
+				const delta = now - ttlContent;
+				// if (this.launchesGallery && (this.launchesGallery.length > 0) && (delta <= this.launchesGalleryTtlDiff))
+				if (this._checkTtl(this.launchesGallery, delta, this.launchesGalleryTtlDiff))
+					return Response.success(correlationId, this.launchesGallery);
+
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LAUNCHES);
+				const response = await service.searchGallery(correlationId, params);
+				this.$logger.debug('store', 'requestLaunchesGallery', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setLaunchesGallery(correlationId, response.results.data);
+					return Response.success(correlationId, this.launchesGallery);
+				}
+
+				return response;
+			},
+			async requestLaunchesGalleryGamerTag(correlationId, params) {
+				const tag = params.gamerTag;
+				this.$logger.debug('store', 'requestLaunchesGalleryGamerTag', 'tag', tag, correlationId);
+				const now = LibraryMomentUtility.getTimestamp();
+				const ttlContent = this.launchesGalleryGamerTagTtl[tag] ? this.launchesGalleryGamerTagTtl[tag] : 0;
+				const delta = now - ttlContent;
+				const rockets = this.launchesGalleryGamerTag[tag];
+				if (rockets) {
+					// if (this.launchesGalleryGamerTag && (this.launchesGalleryGamerTag.length > 0) && (delta <= this.launchesGalleryGamerTagTtlDiff))
+					if (this._checkTtl(this.launchesGalleryGamerTag[tag], delta, this.launchesGalleryGamerTagTtlDiff))
+						return Response.success(correlationId, rockets);
+				}
+
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LAUNCHES);
+				const response = await service.searchGallery(correlationId, params);
+				this.$logger.debug('store', 'requestLaunchesGalleryGamerTag', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setLaunchesGalleryGamerTag(correlationId, tag, response.results.data);
+					return Response.success(correlationId, this.launchesGalleryGamerTag[tag]);
+				}
+
+				return response;
+			},
+			async requestLaunchesGalleryUser(correlationId, params) {
+				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LAUNCHES);
+				const response = await service.searchGallery(correlationId, params);
+				this.$logger.debug('store', 'requestLaunchesGalleryUser', 'response', response, correlationId);
+				if (Response.hasSucceeded(response)) {
+					await this.setLaunchesGalleryUser(correlationId, response.results.data);
+					return Response.success(correlationId, this.launchesGalleryUser);
+				}
+
+				return response;
+			},
 			async requestLocationById(correlationId, id, editable) {
 				// TODO
 				const now = LibraryMomentUtility.getTimestamp();
@@ -721,6 +773,27 @@ class AppStore extends BaseStore {
 				this.launchesTtl = LibraryMomentUtility.getTimestamp();
 				this.$logger.debug('store', 'setLaunches', 'launches.c', this.launches, correlationId);
 			},
+			async setLaunchesGallery(correlationId, value) {
+				this.$logger.debug('store', 'setLaunchesGallery', 'rockets.a', value, correlationId);
+				this.$logger.debug('store', 'setLaunchesGallery', 'launchesGallery.b', this.launchesGallery, correlationId);
+				this.launchesGallery = value;
+				this.launchesGalleryTtl = LibraryMomentUtility.getTimestamp();
+				this.$logger.debug('store', 'setLaunchesGallery', 'launchesGallery.c', this.launchesGallery, correlationId);
+			},
+			async setLaunchesGalleryGamerTag(correlationId, tag, value) {
+				this.$logger.debug('store', 'setLaunchesGalleryGamerTag', 'rockets.a', value, correlationId);
+				this.$logger.debug('store', 'setLaunchesGalleryGamerTag', 'launchesGalleryGamerTag.b', this.launchesGalleryGamerTag[tag], correlationId);
+				this.launchesGalleryGamerTag[tag] = value;
+				this.launchesGalleryGamerTagTtl[tag] = LibraryMomentUtility.getTimestamp();
+				this.$logger.debug('store', 'setLaunchesGalleryGamerTag', 'launchesGalleryGamerTag.c', this.launchesGalleryGamerTag[tag], correlationId);
+			},
+			async setLaunchesGalleryUser(correlationId, value) {
+				this.$logger.debug('store', 'setLaunchesGalleryUser', 'rockets.a', value, correlationId);
+				this.$logger.debug('store', 'setLaunchesGalleryUser', 'launchesGalleryUser.b', this.launchesGalleryUser, correlationId);
+				this.launchesGalleryUser = value;
+				this.launchesGalleryUserTtl = LibraryMomentUtility.getTimestamp();
+				this.$logger.debug('store', 'setLaunchesGalleryUser', 'launchesGalleryUser.c', this.launchesGalleryUser, correlationId);
+			},
 			async setLaunchesSettings(correlationId, value) {
 				this.launchesSettings = value;
 			},
@@ -971,6 +1044,15 @@ class AppStore extends BaseStore {
 			},
 			async requestLaunches(correlationId, params) {
 				return await LibraryClientUtility.$store.requestLaunches(correlationId, params);
+			},
+			async requestLaunchesGallery(correlationId, params) {
+				return await LibraryClientUtility.$store.requestLaunchesGallery(correlationId, params);
+			},
+			async requestLaunchesGalleryGamerTag(correlationId, params) {
+				return await LibraryClientUtility.$store.requestLaunchesGalleryGamerTag(correlationId, params);
+			},
+			async requestLaunchesGalleryUser(correlationId, params) {
+				return await LibraryClientUtility.$store.requestLaunchesGalleryUser(correlationId, params);
 			},
 			async requestLocationById(correlationId, id, editable) {
 				return await LibraryClientUtility.$store.requestLocationById(correlationId, id, editable);
@@ -1250,6 +1332,15 @@ class AppStore extends BaseStore {
 			inventoryTtl: 0,
 			inventoryTtlDiff: 1000 * 60 * 30,
 			launches: [],
+			launchesGallery: [],	
+			launchesGalleryGamerTag: {},
+			launchesGalleryGamerTagTtl: [],
+			launchesGalleryGamerTagTtlDiff: 1000 * 60 * 30,
+			launchesGalleryTtl: 0,
+			launchesGalleryTtlDiff: 1000 * 60 * 30,
+			launchesGalleryUser: [],
+			launchesGalleryUserTtl: 0,
+			launchesGalleryUserTtlDiff: 1000 * 60 * 30,
 			launchesSettings: {},
 			launchesTtl: 0,
 			launchesTtlDiff: 1000 * 60 * 30,
