@@ -40,6 +40,7 @@ class AppStore extends BaseStore {
 			'checklistsSearchCriteria',
 			'inventoryExpanded',
 			'inventorySettings',
+			'launchesGallerySettings',
 			'launchesSettings',
 			'locationsExpanded',
 			'locationsSearchCriteria',
@@ -662,6 +663,16 @@ class AppStore extends BaseStore {
 					await this.setLaunch(correlationId, response.results);
 				return response;
 			},
+			saveLaunchesGallerySettings(correlationId, settings, gamerTag) {
+				gamerTag = gamerTag ? gamerTag : 'default';
+				this.$logger.debug('store', 'saveLaunchesGallerySettings', 'gamerTag', gamerTag, correlationId);
+				this.$logger.debug('store', 'saveLaunchesGallerySettings', 'settings.a', settings, correlationId);
+				this.$logger.debug('store', 'saveLaunchesGallerySettings', 'settings.b', this.launchesGallerySettings[gamerTag], correlationId);
+				if (!this.launchesGallerySettings[gamerTag])
+					this.launchesGallerySettings[gamerTag] = {};
+				this.launchesGallerySettings[gamerTag] = settings;
+				this.$logger.debug('store', 'saveLaunchesGallerySettings', 'settings.c', this.launchesGallerySettings[gamerTag], correlationId);
+			},
 			async saveLocation(correlationId, location) {
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LOCATIONS);
 				const response = await service.save(correlationId, location);
@@ -1190,6 +1201,9 @@ class AppStore extends BaseStore {
 			async saveLaunch(correlationId, launch) {
 				return await LibraryClientUtility.$store.saveLaunch(correlationId, launch);
 			},
+			async saveLaunchesGallerySettings(correlationId, settings, gamerTag) {
+				return await LibraryClientUtility.$store.saveLaunchesGallerySettings(correlationId, settings, gamerTag);
+			},
 			async saveLocation(correlationId, location) {
 				return await LibraryClientUtility.$store.saveLocation(correlationId, location);
 			},
@@ -1335,6 +1349,10 @@ class AppStore extends BaseStore {
 			getInventorySettings() {
 				return LibraryClientUtility.$store.inventorySettings;
 			},
+			getLaunchesGallerySettings(correlationId, gamerTag) {
+				gamerTag = gamerTag ? gamerTag : 'default';
+				return LibraryClientUtility.$store.launchesGallerySettings && LibraryClientUtility.$store.launchesGallerySettings[gamerTag] ? LibraryClientUtility.$store.launchesGallerySettings[gamerTag] : {};
+			},
 			getLaunchesSettings() {
 				return LibraryClientUtility.$store.launchesSettings;
 			},
@@ -1415,7 +1433,7 @@ class AppStore extends BaseStore {
 			launchesGallery: [],	
 			launchesGalleryGamerTag: {},
 			launchesGalleryGamerTagTtl: [],
-			launchesGalleryGamerTagTtlDiff: 1000 * 60 * 30,
+			launchesGallerySettings: {},
 			launchesGalleryTtl: 0,
 			launchesGalleryTtlDiff: 1000 * 60 * 30,
 			launchesGalleryUser: [],
