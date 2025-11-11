@@ -324,6 +324,12 @@ class AppStore extends BaseStore {
 				return response;
 			},
 			async requestLaunches(correlationId, params) {
+				const now = LibraryMomentUtility.getTimestamp();
+				const ttl = this.launchesTtl ? this.launchesTtl : 0;
+				const delta = now - ttl;
+				if (this._checkTtl(this.launches, delta, this.contentMarkupTtlDiff))
+					return Response.success(correlationId, this.launches);
+
 				const service = LibraryClientUtility.$injector.getService(AppSharedConstants.InjectorKeys.SERVICE_LAUNCHES);
 				const response = await service.search(correlationId, params);
 				this.$logger.debug('store', 'requestLaunches', 'response', response, correlationId);
@@ -814,7 +820,7 @@ class AppStore extends BaseStore {
 				this.$logger.debug('store', 'setLaunch', 'launches.a', value, correlationId);
 				this.$logger.debug('store', 'setLaunch', 'launches.b', this.launches, correlationId);
 				this.launches = LibraryCommonUtility.updateArrayByObject(this.launches, value);
-				this.launchesTtl = LibraryMomentUtility.getTimestamp();
+				this.launchesTtl = 0;
 				this.$logger.debug('store', 'setLaunch', 'launches.c', this.launches, correlationId);
 			},
 			async setLaunchGallery(correlationId, value) {
