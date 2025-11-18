@@ -911,6 +911,9 @@ class AppStore extends BaseStore {
 				this.$logger.debug('store', 'setManufacturers', 'manufacturers.c', this.manufacturers, correlationId);
 			},
 			async setMotorSearchCriteria(correlationId, value) {
+				if (!value)
+					return;
+				this.motorSearchCriteria = this.motorSearchCriteria ?? {};
 				this.motorSearchCriteria = value;
 			},
 			async setMotorSearchResults(correlationId, value) {
@@ -959,7 +962,7 @@ class AppStore extends BaseStore {
 				if (!value)
 					return;
 				this.partsRocketSearchCriteria = this.partsRocketSearchCriteria ?? {};
-				this.partsRocketSearchCriteria = value.params;
+				this.partsRocketSearchCriteria = value;
 			},
 			async setPartsSearchCriteria(correlationId, value) {
 				if (!value)
